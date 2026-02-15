@@ -1,0 +1,20 @@
+name: pulse_frontend
+description: Task Management Application
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.0.0
+  lucide_icons_flutter: ^0.562.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/pulse_loading.gif

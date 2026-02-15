@@ -1,0 +1,1 @@
+enum WorkerType { internal, external }
