@@ -26,4 +26,18 @@ class AppStrings {
   
   static const String actionEdit = 'ערוך';
   static const String actionDelete = 'מחק / בטל';
+
+  static const String cancel = 'ביטול';
+  static const String save = 'שמור';
+  static const String create = 'צור';
+  static const String delete = 'מחק';
+  static const String createTask = 'יצירת מטלה';
+  static const String editTask = 'עריכת מטלה';
+  static const String deleteConfirm = 'אישור מחיקה';
+  static const String deleteMessage = 'האם אתה בטוח שברצונך למחוק מטלה זו?';
+  static const String taskName = 'שם המטלה';
+  static const String workerType = 'סוג עובד';
+  static const String unsavedChanges = 'יש שינויים שלא נשמרו';
+  static const String saveChanges = 'שמור שינויים';
+  static const String noTasksToShow = 'אין מטלות להצגה';
 }

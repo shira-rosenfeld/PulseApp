@@ -11,8 +11,12 @@ class ModalsShowcase extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:,
-            )
+          children: [
+            _buildCard(context, LucideIcons.plus, 'יצירת מטלה', 'הוסף מטלה חדשה למערכת', Colors.blue, () => _showCreateTask(context)),
+            const SizedBox(height: 16),
+            _buildCard(context, LucideIcons.pencil, 'עריכת מטלה', 'ערוך פרטי מטלה קיימת', Colors.green, () => _showEditTask(context)),
+            const SizedBox(height: 16),
+            _buildCard(context, LucideIcons.trash2, 'מחיקת מטלה', 'מחק מטלה מהמערכת', Colors.red, () => _showDeleteConfirm(context)),
           ],
         ),
       ),
@@ -23,10 +27,17 @@ class ModalsShowcase extends StatelessWidget {
     return Container(
       width: 250,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE2E8F0)), boxShadow: const),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: const [
+          BoxShadow(color: Color(0x0F000000), blurRadius: 8, offset: Offset(0, 2)),
+        ],
+      ),
       child: Column(
         children: [
-          CircleAvatar(backgroundColor: color[1], radius: 24, child: Icon(icon, color: color, size: 24)),
+          CircleAvatar(backgroundColor: color[100], radius: 24, child: Icon(icon, color: color, size: 24)),
           const SizedBox(height: 16),
           Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
           const SizedBox(height: 8),
@@ -34,8 +45,13 @@ class ModalsShowcase extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: onTap,
-            style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 40), backgroundColor: color == Colors.red? Colors.white : color, foregroundColor: color == Colors.red? Colors.red : Colors.white, side: color == Colors.red? const BorderSide(color: Colors.red) : null),
-            child: Text(color == Colors.red? 'פתח מחיקה' : title.contains('עריכה')? 'פתח עריכה' : 'פתח יצירה'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 40),
+              backgroundColor: color == Colors.red ? Colors.white : color,
+              foregroundColor: color == Colors.red ? Colors.red : Colors.white,
+              side: color == Colors.red ? const BorderSide(color: Colors.red) : null,
+            ),
+            child: Text(color == Colors.red ? 'פתח מחיקה' : title.contains('עריכה') ? 'פתח עריכה' : 'פתח יצירה'),
           )
         ],
       ),
@@ -63,7 +79,14 @@ class CreateTaskModal extends StatefulWidget {
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
   String _workerType = 'INTERNAL';
-  
+  final _taskNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _taskNameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -72,10 +95,19 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(color: Color(0xFFF8FAFC), border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9)))),
+        decoration: const BoxDecoration(
+          color: Color(0xFFF8FAFC),
+          border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9))),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:,
+          children: [
+            const Row(
+              children: [
+                Icon(LucideIcons.plus, size: 18, color: Color(0xFF2563EB)),
+                SizedBox(width: 8),
+                Text('יצירת מטלה', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+              ],
             ),
             IconButton(icon: const Icon(LucideIcons.x), onPressed: () => Navigator.pop(context)),
           ],
@@ -86,13 +118,52 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:,
+          children: [
+            const Text('שם המטלה', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _taskNameController,
+              decoration: InputDecoration(
+                hintText: 'הכנס שם מטלה...',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
-            )
+            ),
+            const SizedBox(height: 16),
+            const Text('סוג עובד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: _workerType,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'INTERNAL', child: Text('עובד חברה')),
+                DropdownMenuItem(value: 'EXTERNAL', child: Text('יועץ חיצוני')),
+              ],
+              onChanged: (val) => setState(() => _workerType = val!),
+            ),
           ],
         ),
       ),
-      actions:,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('ביטול'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // TODO: wire up to provider / API
+            Navigator.pop(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2563EB),
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('צור מטלה'),
+        ),
+      ],
     );
   }
 }
@@ -107,10 +178,19 @@ class EditTaskModal extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(color: Color(0xFFF8FAFC), border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9)))),
+        decoration: const BoxDecoration(
+          color: Color(0xFFF8FAFC),
+          border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9))),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:,
+          children: [
+            const Row(
+              children: [
+                Icon(LucideIcons.pencil, size: 18, color: Color(0xFF16A34A)),
+                SizedBox(width: 8),
+                Text('עריכת מטלה', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+              ],
             ),
             IconButton(icon: const Icon(LucideIcons.x), onPressed: () => Navigator.pop(context)),
           ],
@@ -121,15 +201,37 @@ class EditTaskModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:,
+          children: [
+            const Text('שם המטלה', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'ערוך שם מטלה...',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
               onChanged: (val) {},
             ),
           ],
         ),
       ),
       actionsAlignment: MainAxisAlignment.spaceBetween,
-      actions:,
-        )
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('ביטול'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // TODO: wire up to provider / API
+            Navigator.pop(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF16A34A),
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('שמור'),
+        ),
       ],
     );
   }
@@ -144,9 +246,38 @@ class DeleteConfirmModal extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       content: const Column(
         mainAxisSize: MainAxisSize.min,
-        children:,
+        children: [
+          Icon(LucideIcons.triangleAlert, size: 48, color: Color(0xFFEF4444)),
+          SizedBox(height: 16),
+          Text(
+            'אישור מחיקה',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'האם אתה בטוח שברצונך למחוק מטלה זו?',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
+          ),
+        ],
       ),
-      actions:,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('ביטול'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // TODO: wire up to provider / API
+            Navigator.pop(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFEF4444),
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('מחק'),
+        ),
+      ],
     );
   }
 }

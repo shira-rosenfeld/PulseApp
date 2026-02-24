@@ -24,7 +24,11 @@ class PulseApp extends StatelessWidget {
     return MaterialApp(
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: const,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       supportedLocales: const [Locale('he', 'IL')],
       locale: const Locale('he', 'IL'),
       theme: ThemeData(
@@ -39,7 +43,11 @@ class PulseApp extends StatelessWidget {
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children:,
+                  children: [
+                    Image(image: const AssetImage('assets/pulse_loading.gif'), width: 120, height: 120),
+                    const SizedBox(height: 16),
+                    const Text('Pulse', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  ],
                 ),
               ),
             );
