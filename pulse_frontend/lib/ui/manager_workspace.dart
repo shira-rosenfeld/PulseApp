@@ -115,7 +115,7 @@ class ManagerWorkspace extends ConsumerWidget {
             Row(
               children: [
                 OutlinedButton.icon(
-                  icon: const Icon(LucideIcons.filter, size: 14),
+                  icon: const Icon(LucideIcons.listFilter, size: 14),
                   label: const Text(AppStrings.advancedFilter, style: TextStyle(fontSize: 13)),
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFF64748B)),
@@ -344,7 +344,7 @@ class ManagerWorkspace extends ConsumerWidget {
             flex: 1,
             child: Center(
               child: PopupMenuButton<String>(
-                icon: const Icon(LucideIcons.moreVertical, size: 16, color: Color(0xFF94A3B8)),
+                icon: const Icon(LucideIcons.ellipsisVertical, size: 16, color: Color(0xFF94A3B8)),
                 color: Colors.white,
                 position: PopupMenuPosition.under,
                 onSelected: (value) {

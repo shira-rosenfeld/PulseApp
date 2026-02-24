@@ -3,14 +3,35 @@ import '../models/dtos/worker_task.dart';
 import '../models/enums/work_item_status.dart';
 import '../models/enums/worker_type.dart';
 
-final weekProvider = StateProvider<int>((ref) => 5);
-final taskFilterProvider = StateProvider<String>((ref) => 'OPEN');
-final proxyUserProvider = StateProvider<String>((ref) => 'SELF');
-final hasChangesProvider = StateProvider<bool>((ref) => false);
+class WeekNotifier extends Notifier<int> {
+  @override
+  int build() => 5;
+}
 
-final workerTasksProvider = StateNotifierProvider<WorkerTasksNotifier, List<WorkerTask>>((ref) {
-  return WorkerTasksNotifier(ref, _initialTasks());
-});
+final weekProvider = NotifierProvider<WeekNotifier, int>(WeekNotifier.new);
+
+class TaskFilterNotifier extends Notifier<String> {
+  @override
+  String build() => 'OPEN';
+}
+
+final taskFilterProvider = NotifierProvider<TaskFilterNotifier, String>(TaskFilterNotifier.new);
+
+class ProxyUserNotifier extends Notifier<String> {
+  @override
+  String build() => 'SELF';
+}
+
+final proxyUserProvider = NotifierProvider<ProxyUserNotifier, String>(ProxyUserNotifier.new);
+
+class HasChangesNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+}
+
+final hasChangesProvider = NotifierProvider<HasChangesNotifier, bool>(HasChangesNotifier.new);
+
+final workerTasksProvider = NotifierProvider<WorkerTasksNotifier, List<WorkerTask>>(WorkerTasksNotifier.new);
 
 List<WorkerTask> _initialTasks() {
   return [
@@ -81,9 +102,9 @@ List<WorkerTask> _initialTasks() {
   ];
 }
 
-class WorkerTasksNotifier extends StateNotifier<List<WorkerTask>> {
-  final Ref ref;
-  WorkerTasksNotifier(this.ref, super.state);
+class WorkerTasksNotifier extends Notifier<List<WorkerTask>> {
+  @override
+  List<WorkerTask> build() => _initialTasks();
 
   void updateHours(String id, double delta) {
     ref.read(hasChangesProvider.notifier).state = true;

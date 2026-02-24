@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../models/dtos/worker_task.dart';
 import '../models/enums/work_item_status.dart';
 import '../providers/worker_providers.dart';
 
@@ -147,13 +148,13 @@ class WorkerWorkspace extends ConsumerWidget {
                       children: [
                         IconButton(
                           onPressed: () => ref.read(weekProvider.notifier).state = (week < 52 ? week + 1 : 52),
-                          icon: Icon(LucideIcons.chevronRight.dir(), size: 18, color: const Color(0xFF64748B)),
+                          icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
                           visualDensity: VisualDensity.compact,
                         ),
                         Text('שבוע $week', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                         IconButton(
                           onPressed: () => ref.read(weekProvider.notifier).state = (week > 1 ? week - 1 : 1),
-                          icon: Icon(LucideIcons.chevronLeft.dir(), size: 18, color: const Color(0xFF64748B)),
+                          icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
                           visualDensity: VisualDensity.compact,
                         ),
                       ],
@@ -206,7 +207,7 @@ class WorkerWorkspace extends ConsumerWidget {
             const SizedBox(width: 12),
             _buildStatCard('משימות פתוחות', '${tasks.where((t) => ['10', '20', '30'].contains(t.status.code)).length}', LucideIcons.listTodo, const Color(0xFFFFF7ED), const Color(0xFFEA580C), const Color(0xFF1E293B)),
             const SizedBox(width: 12),
-            _buildStatCard('הושלמו', '${tasks.where((t) => ['40', '90'].contains(t.status.code)).length}', LucideIcons.checkCircle, const Color(0xFFFAF5FF), const Color(0xFF7E22CE), const Color(0xFF1E293B)),
+            _buildStatCard('הושלמו', '${tasks.where((t) => ['40', '90'].contains(t.status.code)).length}', LucideIcons.circleCheck, const Color(0xFFFAF5FF), const Color(0xFF7E22CE), const Color(0xFF1E293B)),
           ],
         ),
         Container(

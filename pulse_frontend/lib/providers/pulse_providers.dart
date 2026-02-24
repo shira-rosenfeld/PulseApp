@@ -6,18 +6,23 @@ import '../models/dtos/worker.dart';
 import '../models/enums/worker_type.dart';
 import '../models/enums/work_item_status.dart';
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
+class SearchQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+}
 
-final expandedNodesProvider = StateNotifierProvider<ExpandedNodesNotifier, Map<String, bool>>((ref) {
-  return ExpandedNodesNotifier({'WBS-2026.10': true, 'NET-80001': true, 'NET-80002': true});
-});
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
 
-class ExpandedNodesNotifier extends StateNotifier<Map<String, bool>> {
-  ExpandedNodesNotifier(super.state);
+class ExpandedNodesNotifier extends Notifier<Map<String, bool>> {
+  @override
+  Map<String, bool> build() => {'WBS-2026.10': true, 'NET-80001': true, 'NET-80002': true};
+
   void toggle(String id) {
     state = {...state, id: !(state[id] ?? false)};
   }
 }
+
+final expandedNodesProvider = NotifierProvider<ExpandedNodesNotifier, Map<String, bool>>(ExpandedNodesNotifier.new);
 
 // Mock Data Source
 final wbsDataProvider = Provider<List<Target>>((ref) {
