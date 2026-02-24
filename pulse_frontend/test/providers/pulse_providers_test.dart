@@ -8,7 +8,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      container.read(searchQueryProvider.notifier).state = '';
+      container.read(searchQueryProvider.notifier).set('');
       final result = container.read(filteredDataProvider);
       final allData = container.read(wbsDataProvider);
 
@@ -20,7 +20,7 @@ void main() {
       addTearDown(container.dispose);
 
       // Use part of the first target's name
-      container.read(searchQueryProvider.notifier).state = 'פיתוח מערכת';
+      container.read(searchQueryProvider.notifier).set('פיתוח מערכת');
       final result = container.read(filteredDataProvider);
 
       expect(result.isNotEmpty, true);
@@ -31,7 +31,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      container.read(searchQueryProvider.notifier).state = 'יוסי כהן';
+      container.read(searchQueryProvider.notifier).set('יוסי כהן');
       final result = container.read(filteredDataProvider);
 
       expect(result.isNotEmpty, true);
@@ -46,7 +46,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      container.read(searchQueryProvider.notifier).state = 'zzzznotexist';
+      container.read(searchQueryProvider.notifier).set('zzzznotexist');
       final result = container.read(filteredDataProvider);
 
       expect(result.isEmpty, true);
