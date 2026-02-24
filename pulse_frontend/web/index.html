@@ -16,17 +16,6 @@
     <p style="font-family: 'Segoe UI', Arial, sans-serif; color: #475569; font-weight: bold; margin-top: 16px; direction: rtl;">טוען סביבת עבודה...</p>
   </div>
 
-  <script>
-    {{flutter_js}}
-    {{flutter_build_config}}
-
-    _flutter.loader.load({
-      onEntrypointLoaded: async function(engineInitializer) {
-        let appRunner = await engineInitializer.initializeEngine();
-        await appRunner.runApp();
-        document.getElementById('loading_indicator').remove();
-      }
-    });
-  </script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

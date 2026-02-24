@@ -10,12 +10,25 @@ void main() {
   runApp(const ProviderScope(child: PulseApp()));
 }
 
-class PulseApp extends StatelessWidget {
+class PulseApp extends StatefulWidget {
   const PulseApp({super.key});
+
+  @override
+  State<PulseApp> createState() => _PulseAppState();
+}
+
+class _PulseAppState extends State<PulseApp> {
+  late final Future<String> _roleFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _roleFuture = _fetchUserRole();
+  }
 
   Future<String> _fetchUserRole() async {
     // API Call to backend
-    await Future.delayed(const Duration(seconds: 2)); 
+    await Future.delayed(const Duration(seconds: 2));
     return 'Worker'; // Switched to 'Worker' to load the new screen
   }
 
@@ -33,10 +46,10 @@ class PulseApp extends StatelessWidget {
       locale: const Locale('he', 'IL'),
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-        fontFamily: 'Segoe UI', 
+        fontFamily: 'Segoe UI',
       ),
       home: FutureBuilder<String>(
-        future: _fetchUserRole(),
+        future: _roleFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
@@ -56,7 +69,7 @@ class PulseApp extends StatelessWidget {
           if (snapshot.hasData && snapshot.data == 'Manager') {
             return const ManagerWorkspace();
           } else {
-            return const WorkerWorkspace(); 
+            return const WorkerWorkspace();
           }
         },
       ),
