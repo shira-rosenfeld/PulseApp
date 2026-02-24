@@ -1,0 +1,158 @@
+# ======================
+# .NET / C# (PulseBackend)
+# ======================
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.swp
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# ASP.NET
+wwwroot/bundle/
+
+# Publish output
+publish/
+**/publish/
+
+# ======================
+# Flutter / Dart (pulse_frontend)
+# ======================
+
+# Build outputs
+pulse_frontend/build/
+pulse_frontend/.dart_tool/
+pulse_frontend/.flutter-plugins
+pulse_frontend/.flutter-plugins-dependencies
+pulse_frontend/.packages
+pulse_frontend/.pub-cache/
+pulse_frontend/.pub/
+
+# Android
+pulse_frontend/android/.gradle/
+pulse_frontend/android/captures/
+pulse_frontend/android/gradlew
+pulse_frontend/android/gradlew.bat
+pulse_frontend/android/local.properties
+pulse_frontend/android/**/GeneratedPluginRegistrant.java
+pulse_frontend/android/key.properties
+pulse_frontend/android/**/*.keystore
+pulse_frontend/android/**/*.jks
+
+# iOS
+pulse_frontend/ios/.generated/
+pulse_frontend/ios/Flutter/App.framework
+pulse_frontend/ios/Flutter/Flutter.framework
+pulse_frontend/ios/Flutter/Flutter.podspec
+pulse_frontend/ios/Flutter/Generated.xcconfig
+pulse_frontend/ios/Flutter/ephemeral/
+pulse_frontend/ios/Flutter/app.flx
+pulse_frontend/ios/Flutter/app.zip
+pulse_frontend/ios/Flutter/flutter_assets/
+pulse_frontend/ios/ServiceDefinitions.json
+pulse_frontend/ios/Runner/GeneratedPluginRegistrant.*
+pulse_frontend/ios/Pods/
+
+# macOS
+pulse_frontend/macos/Flutter/GeneratedPluginRegistrant.swift
+pulse_frontend/macos/Flutter/ephemeral/
+
+# Web
+pulse_frontend/web/flutter_service_worker.js
+pulse_frontend/web/flutter.js
+pulse_frontend/web/flutter_bootstrap.js
+pulse_frontend/web/main.dart.js
+pulse_frontend/web/main.dart.js.map
+pulse_frontend/web/main.dart.js.deps
+pulse_frontend/web/favicon.png
+
+# Windows
+pulse_frontend/windows/flutter/generated_plugin_registrant.cc
+pulse_frontend/windows/flutter/generated_plugin_registrant.h
+pulse_frontend/windows/flutter/generated_plugins.cmake
+pulse_frontend/windows/flutter/ephemeral/
+
+# Linux
+pulse_frontend/linux/flutter/generated_plugin_registrant.cc
+pulse_frontend/linux/flutter/generated_plugin_registrant.h
+pulse_frontend/linux/flutter/generated_plugins.cmake
+pulse_frontend/linux/flutter/ephemeral/
+
+# Coverage
+pulse_frontend/coverage/
+
+# ======================
+# IDE & Editor
+# ======================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+.history/
+
+# JetBrains Rider
+.idea/
+*.DotSettings.user
+
+# ======================
+# OS Files
+# ======================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ======================
+# Secrets & Config
+# ======================
+appsettings.Development.json
+appsettings.Production.json
+*.env
+.env
+.env.*
+secrets.json
+**/secrets.json
+
+# ======================
+# Logs & Temp
+# ======================
+*.log
+*.tmp
+*.temp
+/tmp/

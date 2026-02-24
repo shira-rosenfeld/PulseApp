@@ -1,14 +1,15 @@
-using Microsoft.AspNetCore.Authentication.Negotiate;
+// using Microsoft.AspNetCore.Authentication.Negotiate; // Re-enable with auth
 using PulseBackend.Models.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Windows Authentication for AD SSO
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+// TODO: Re-enable for production (requires Active Directory / Windows host)
+// builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
+// builder.Services.AddAuthorization(options =>
+// {
+//     options.FallbackPolicy = options.DefaultPolicy;
+// });
 
 // Configure internal SAP API connection
 builder.Services.AddHttpClient("SapApi", client =>
@@ -18,19 +19,19 @@ builder.Services.AddHttpClient("SapApi", client =>
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 // 1. User Profile Endpoint (Determines Manager vs Worker)
+// TODO: When auth is re-enabled, replace mock with AD group check:
+//   bool isManager = context.User.IsInRole("Pulse_Managers");
+//   Username = context.User.Identity?.Name
 app.MapGet("/api/v1/user/profile", (HttpContext context) =>
 {
-    // Checks if the AD user is part of the "Pulse_Managers" AD group
-    bool isManager = context.User.IsInRole("Pulse_Managers");
-    
-    return Results.Ok(new 
-    { 
-        Username = context.User.Identity?.Name, 
-        Role = isManager? "Manager" : "Worker" 
+    return Results.Ok(new
+    {
+        Username = "anonymous",
+        Role = "Worker"  // Change to "Manager" to test the manager view
     });
 });
 
