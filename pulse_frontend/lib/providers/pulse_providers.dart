@@ -9,6 +9,7 @@ import '../models/enums/work_item_status.dart';
 class SearchQueryNotifier extends Notifier<String> {
   @override
   String build() => '';
+  void set(String v) => state = v;
 }
 
 final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);

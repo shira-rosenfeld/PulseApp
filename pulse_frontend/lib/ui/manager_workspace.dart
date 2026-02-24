@@ -102,7 +102,7 @@ class ManagerWorkspace extends ConsumerWidget {
             SizedBox(
               width: 300,
               child: TextField(
-                onChanged: (val) => ref.read(searchQueryProvider.notifier).state = val,
+                onChanged: (val) => ref.read(searchQueryProvider.notifier).set(val),
                 decoration: InputDecoration(
                   hintText: AppStrings.searchPlaceholder,
                   prefixIcon: const Icon(LucideIcons.search, size: 16, color: Color(0xFF94A3B8)),

@@ -108,7 +108,7 @@ class WorkerWorkspace extends ConsumerWidget {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           elevation: 4,
                         ),
-                        onPressed: () => ref.read(hasChangesProvider.notifier).state = false,
+                        onPressed: () => ref.read(hasChangesProvider.notifier).set(false),
                         icon: const Icon(LucideIcons.save, size: 18),
                         label: const Text('שמור שינויים', style: TextStyle(fontWeight: FontWeight.bold)),
                       )
@@ -147,13 +147,13 @@ class WorkerWorkspace extends ConsumerWidget {
                     child: Row(
                       children: [
                         IconButton(
-                          onPressed: () => ref.read(weekProvider.notifier).state = (week < 52 ? week + 1 : 52),
+                          onPressed: () => ref.read(weekProvider.notifier).set(week < 52 ? week + 1 : 52),
                           icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
                           visualDensity: VisualDensity.compact,
                         ),
                         Text('שבוע $week', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                         IconButton(
-                          onPressed: () => ref.read(weekProvider.notifier).state = (week > 1 ? week - 1 : 1),
+                          onPressed: () => ref.read(weekProvider.notifier).set(week > 1 ? week - 1 : 1),
                           icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
                           visualDensity: VisualDensity.compact,
                         ),
@@ -178,7 +178,7 @@ class WorkerWorkspace extends ConsumerWidget {
                             DropdownMenuItem(value: 'שירה רוזנפלד', child: Text('שירה רוזנפלד')),
                             DropdownMenuItem(value: 'יוסי כהן', child: Text('יוסי כהן')),
                           ],
-                          onChanged: (val) => ref.read(proxyUserProvider.notifier).state = val!,
+                          onChanged: (val) => ref.read(proxyUserProvider.notifier).set(val!),
                         ),
                       ],
                     ),
@@ -218,7 +218,7 @@ class WorkerWorkspace extends ConsumerWidget {
               final isSelected = filter == f;
               String label = f == 'ALL' ? 'הכל' : f == 'OPEN' ? 'פתוח לדיווח' : 'סגור/בוטל';
               return GestureDetector(
-                onTap: () => ref.read(taskFilterProvider.notifier).state = f,
+                onTap: () => ref.read(taskFilterProvider.notifier).set(f),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(

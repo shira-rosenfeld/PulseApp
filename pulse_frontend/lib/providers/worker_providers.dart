@@ -6,6 +6,7 @@ import '../models/enums/worker_type.dart';
 class WeekNotifier extends Notifier<int> {
   @override
   int build() => 5;
+  void set(int v) => state = v;
 }
 
 final weekProvider = NotifierProvider<WeekNotifier, int>(WeekNotifier.new);
@@ -13,6 +14,7 @@ final weekProvider = NotifierProvider<WeekNotifier, int>(WeekNotifier.new);
 class TaskFilterNotifier extends Notifier<String> {
   @override
   String build() => 'OPEN';
+  void set(String v) => state = v;
 }
 
 final taskFilterProvider = NotifierProvider<TaskFilterNotifier, String>(TaskFilterNotifier.new);
@@ -20,6 +22,7 @@ final taskFilterProvider = NotifierProvider<TaskFilterNotifier, String>(TaskFilt
 class ProxyUserNotifier extends Notifier<String> {
   @override
   String build() => 'SELF';
+  void set(String v) => state = v;
 }
 
 final proxyUserProvider = NotifierProvider<ProxyUserNotifier, String>(ProxyUserNotifier.new);
@@ -27,6 +30,7 @@ final proxyUserProvider = NotifierProvider<ProxyUserNotifier, String>(ProxyUserN
 class HasChangesNotifier extends Notifier<bool> {
   @override
   bool build() => false;
+  void set(bool v) => state = v;
 }
 
 final hasChangesProvider = NotifierProvider<HasChangesNotifier, bool>(HasChangesNotifier.new);
@@ -107,7 +111,7 @@ class WorkerTasksNotifier extends Notifier<List<WorkerTask>> {
   List<WorkerTask> build() => _initialTasks();
 
   void updateHours(String id, double delta) {
-    ref.read(hasChangesProvider.notifier).state = true;
+    ref.read(hasChangesProvider.notifier).set(true);
     state = state.map((task) {
       if (task.id != id) return task;
 
@@ -123,7 +127,7 @@ class WorkerTasksNotifier extends Notifier<List<WorkerTask>> {
   }
 
   void updateStatus(String id, WorkItemStatus newStatus) {
-    ref.read(hasChangesProvider.notifier).state = true;
+    ref.read(hasChangesProvider.notifier).set(true);
     state = state.map((task) => task.id == id ? task.copyWith(status: newStatus) : task).toList();
   }
 }

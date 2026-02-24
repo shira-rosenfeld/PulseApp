@@ -13,11 +13,16 @@ List<WorkerTask> _seedTasks() => [
   WorkerTask(id: 'T5', path: 'P3', desc: 'Task 5', status: WorkItemStatus.canceled, planned: 4, totalReported: 0, reportedThisWeek: 0, workerType: WorkerType.external),
 ];
 
+// Injects seed tasks instead of the production initial state.
+class _SeedTasksNotifier extends WorkerTasksNotifier {
+  @override
+  List<WorkerTask> build() => _seedTasks();
+}
+
 ProviderContainer _makeContainer() {
-  final container = ProviderContainer(overrides: [
-    workerTasksProvider.overrideWith((ref) => WorkerTasksNotifier(ref, _seedTasks())),
+  return ProviderContainer(overrides: [
+    workerTasksProvider.overrideWith(_SeedTasksNotifier.new),
   ]);
-  return container;
 }
 
 void main() {
@@ -78,7 +83,7 @@ void main() {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(taskFilterProvider.notifier).state = 'OPEN';
+      container.read(taskFilterProvider.notifier).set('OPEN');
       final filtered = container.read(filteredWorkerTasksProvider);
 
       expect(filtered.any((t) => t.status == WorkItemStatus.newTask), true);
@@ -92,7 +97,7 @@ void main() {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(taskFilterProvider.notifier).state = 'CLOSED';
+      container.read(taskFilterProvider.notifier).set('CLOSED');
       final filtered = container.read(filteredWorkerTasksProvider);
 
       expect(filtered.any((t) => t.status == WorkItemStatus.done), true);
@@ -105,7 +110,7 @@ void main() {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(taskFilterProvider.notifier).state = 'ALL';
+      container.read(taskFilterProvider.notifier).set('ALL');
       final filtered = container.read(filteredWorkerTasksProvider);
 
       expect(filtered.length, 5);
