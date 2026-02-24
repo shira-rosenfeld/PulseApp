@@ -1,0 +1,23 @@
+{
+  "name": "PulseApp",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:10.0",
+  "features": {
+    "ghcr.io/devcontainers/features/flutter:1": {}
+  },
+  "forwardPorts": [5000, 3000],
+  "portsAttributes": {
+    "5000": { "label": "Backend API", "onAutoForward": "notify" },
+    "3000": { "label": "Flutter Web", "onAutoForward": "openBrowser" }
+  },
+  "postCreateCommand": "cd pulse_frontend && flutter pub get",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.flutter",
+        "Dart-Code.dart-code",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit"
+      ]
+    }
+  }
+}
