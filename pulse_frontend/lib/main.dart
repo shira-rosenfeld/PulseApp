@@ -57,9 +57,9 @@ class _PulseAppState extends State<PulseApp> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image(image: const AssetImage('assets/pulse_loading.gif'), width: 120, height: 120),
+                    Image(image: const AssetImage('assets/pulse_loading.gif'), width: 150, height: 150),
                     const SizedBox(height: 16),
-                    const Text('Pulse', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    const Text('טוען סביבת עבודה...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
                   ],
                 ),
               ),
