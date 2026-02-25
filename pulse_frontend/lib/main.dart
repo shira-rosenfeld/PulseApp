@@ -1,5 +1,4 @@
-// ignore_for_file: deprecated_member_use
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,11 +7,16 @@ import 'ui/worker_workspace.dart';
 // import 'ui/task_modals.dart'; // Import this if you want to preview ModalsShowcase()
 import 'core/app_strings.dart';
 
+// Calls window._pulseRemoveLoader() defined in index.html.
+// dart:js_interop is the modern, non-deprecated JS interop API (Dart 3.x).
+@JS('_pulseRemoveLoader')
+external void _pulseRemoveLoader();
+
 void main() {
-  // Remove the HTML loading indicator now that Flutter is ready.
-  // The div stays visible during engine init (before main() runs),
-  // then is removed here so Flutter's rendering is no longer covered.
-  html.document.getElementById('loading_indicator')?.remove();
+  // Remove the HTML loading indicator now that Flutter's engine is ready.
+  // The div is visible during engine init; this call removes it so Flutter's
+  // rendered output is no longer covered.
+  _pulseRemoveLoader();
   runApp(const ProviderScope(child: PulseApp()));
 }
 

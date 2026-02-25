@@ -14,6 +14,14 @@
     <img src="pulse_loading.gif" alt="Loading..." width="150" />
     <p style="font-family: 'Segoe UI', Arial, sans-serif; color: #475569; font-weight: bold; margin-top: 16px; direction: rtl;">טוען סביבת עבודה...</p>
   </div>
+  <script>
+    // Called from Dart main() via dart:js_interop to remove the loading
+    // indicator the instant Flutter's engine is ready.
+    window._pulseRemoveLoader = function() {
+      var el = document.getElementById('loading_indicator');
+      if (el) el.parentNode.removeChild(el);
+    };
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
