@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,10 @@ import 'ui/worker_workspace.dart';
 import 'core/app_strings.dart';
 
 void main() {
+  // Remove the HTML loading indicator now that Flutter is ready.
+  // The div stays visible during engine init (before main() runs),
+  // then is removed here so Flutter's rendering is no longer covered.
+  html.document.getElementById('loading_indicator')?.remove();
   runApp(const ProviderScope(child: PulseApp()));
 }
 
