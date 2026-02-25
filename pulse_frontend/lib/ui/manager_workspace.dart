@@ -82,7 +82,7 @@ class ManagerWorkspace extends ConsumerWidget {
           color: Colors.white,
           border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

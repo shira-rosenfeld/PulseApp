@@ -78,7 +78,7 @@ class CreateTaskModal extends StatefulWidget {
 }
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
-  String _workerType = 'INTERNAL';
+  String? _workerType;
   String? _selectedWorker;
   final _taskNameController = TextEditingController();
 
@@ -93,6 +93,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   List<String> get _currentWorkers =>
       _workerType == 'INTERNAL' ? _internalWorkers : _externalWorkers;
+
+  static BoxDecoration get _dropdownDecoration => BoxDecoration(
+        border: Border.all(color: const Color(0xFFCBD5E1)),
+        borderRadius: BorderRadius.circular(8),
+      );
 
   @override
   void dispose() {
@@ -145,36 +150,43 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             const SizedBox(height: 16),
             const Text('סוג עובד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
             const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _workerType,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            Container(
+              decoration: _dropdownDecoration,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: DropdownButton<String>(
+                value: _workerType,
+                hint: const Text('בחר סוג עובד...', style: TextStyle(color: Color(0xFF94A3B8))),
+                isExpanded: true,
+                underline: const SizedBox(),
+                items: const [
+                  DropdownMenuItem(value: 'INTERNAL', child: Text('עובד חברה')),
+                  DropdownMenuItem(value: 'EXTERNAL', child: Text('יועץ חיצוני')),
+                ],
+                onChanged: (val) => setState(() {
+                  _workerType = val;
+                  _selectedWorker = null;
+                }),
               ),
-              items: const [
-                DropdownMenuItem(value: 'INTERNAL', child: Text('עובד חברה')),
-                DropdownMenuItem(value: 'EXTERNAL', child: Text('יועץ חיצוני')),
-              ],
-              onChanged: (val) => setState(() {
-                _workerType = val!;
-                _selectedWorker = null;
-              }),
             ),
-            const SizedBox(height: 16),
-            const Text('אחראי ביצוע', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _selectedWorker,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            if (_workerType != null) ...[
+              const SizedBox(height: 16),
+              const Text('אחראי ביצוע', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+              const SizedBox(height: 8),
+              Container(
+                decoration: _dropdownDecoration,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButton<String>(
+                  value: _selectedWorker,
+                  hint: const Text('בחר עובד...', style: TextStyle(color: Color(0xFF94A3B8))),
+                  isExpanded: true,
+                  underline: const SizedBox(),
+                  items: _currentWorkers
+                      .map((name) => DropdownMenuItem(value: name, child: Text(name)))
+                      .toList(),
+                  onChanged: (val) => setState(() => _selectedWorker = val),
+                ),
               ),
-              hint: const Text('בחר עובד...'),
-              items: _currentWorkers
-                  .map((name) => DropdownMenuItem(value: name, child: Text(name)))
-                  .toList(),
-              onChanged: (val) => setState(() => _selectedWorker = val),
-            ),
+            ],
           ],
         ),
       ),
