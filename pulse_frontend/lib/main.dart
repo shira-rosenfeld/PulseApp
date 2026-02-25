@@ -37,9 +37,10 @@ class _PulseAppState extends State<PulseApp> {
   }
 
   Future<String> _fetchUserRole() async {
-    // API Call to backend
-    await Future.delayed(const Duration(seconds: 2));
-    return 'Worker'; // Switched to 'Worker' to load the new screen
+    // TODO: Replace with real API call to backend (e.g. GET /api/me/role).
+    // No artificial delay — the actual network round-trip will provide
+    // natural latency once the backend is wired up.
+    return 'Worker';
   }
 
   @override
