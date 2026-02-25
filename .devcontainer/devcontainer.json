@@ -1,0 +1,23 @@
+{
+  "name": "PulseApp",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:10.0",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/flutter/bin"
+  },
+  "forwardPorts": [5000, 3000],
+  "portsAttributes": {
+    "5000": { "label": "Backend API", "onAutoForward": "notify" },
+    "3000": { "label": "Flutter Web", "onAutoForward": "openBrowser" }
+  },
+  "postCreateCommand": "git clone https://github.com/flutter/flutter.git -b stable --depth 1 ~/flutter && ~/flutter/bin/flutter precache --web && cd /workspaces/PulseApp/pulse_frontend && ~/flutter/bin/flutter pub get",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.flutter",
+        "Dart-Code.dart-code",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit"
+      ]
+    }
+  }
+}

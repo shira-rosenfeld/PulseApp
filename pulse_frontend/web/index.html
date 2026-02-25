@@ -9,27 +9,19 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
 </head>
-<body style="background-color: #F8FAFC; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;">
-
-  <div id="loading_indicator" style="text-align: center;">
+<body style="background-color: #F8FAFC; margin: 0;">
+  <div id="loading_indicator" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #F8FAFC;">
     <img src="pulse_loading.gif" alt="Loading..." width="150" />
     <p style="font-family: 'Segoe UI', Arial, sans-serif; color: #475569; font-weight: bold; margin-top: 16px; direction: rtl;">טוען סביבת עבודה...</p>
   </div>
-
   <script>
-    window.addEventListener('load', function(ev) {
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: async function(engineInitializer) {
-          let appRunner = await engineInitializer.initializeEngine();
-          await appRunner.runApp();
-          // Remove the HTML GIF once Flutter takes over the screen
-          document.getElementById('loading_indicator').remove();
-        }
-      });
-    });
+    // Called from Dart main() via dart:js_interop to remove the loading
+    // indicator the instant Flutter's engine is ready.
+    window._pulseRemoveLoader = function() {
+      var el = document.getElementById('loading_indicator');
+      if (el) el.parentNode.removeChild(el);
+    };
   </script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
