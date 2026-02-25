@@ -88,7 +88,6 @@ pulse_frontend/macos/Flutter/ephemeral/
 # Web
 pulse_frontend/web/flutter_service_worker.js
 pulse_frontend/web/flutter.js
-pulse_frontend/web/flutter_bootstrap.js
 pulse_frontend/web/main.dart.js
 pulse_frontend/web/main.dart.js.map
 pulse_frontend/web/main.dart.js.deps
