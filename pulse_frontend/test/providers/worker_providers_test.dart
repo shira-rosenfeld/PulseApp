@@ -26,12 +26,12 @@ ProviderContainer _makeContainer() {
 }
 
 void main() {
-  group('WorkerTasksNotifier.updateHours', () {
-    test('increases hours by delta', () {
+  group('WorkerTasksNotifier.updateDays', () {
+    test('increases days by delta', () {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(workerTasksProvider.notifier).updateHours('T2', 3.0);
+      container.read(workerTasksProvider.notifier).updateDays('T2', 3.0);
       final task = container.read(workerTasksProvider).firstWhere((t) => t.id == 'T2');
 
       expect(task.reportedThisWeek, 3.0);
@@ -41,17 +41,17 @@ void main() {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(workerTasksProvider.notifier).updateHours('T1', -5.0);
+      container.read(workerTasksProvider.notifier).updateDays('T1', -5.0);
       final task = container.read(workerTasksProvider).firstWhere((t) => t.id == 'T1');
 
       expect(task.reportedThisWeek, 0.0);
     });
 
-    test('auto-promotes newTask to inProgress when hours > 0', () {
+    test('auto-promotes newTask to inProgress when days > 0', () {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(workerTasksProvider.notifier).updateHours('T1', 1.0);
+      container.read(workerTasksProvider.notifier).updateDays('T1', 0.5);
       final task = container.read(workerTasksProvider).firstWhere((t) => t.id == 'T1');
 
       expect(task.status, WorkItemStatus.inProgress);
@@ -61,7 +61,7 @@ void main() {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
-      container.read(workerTasksProvider.notifier).updateHours('T1', 2.0);
+      container.read(workerTasksProvider.notifier).updateDays('T1', 2.0);
       expect(container.read(hasChangesProvider), true);
     });
   });

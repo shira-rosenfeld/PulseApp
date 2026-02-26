@@ -322,8 +322,8 @@ class ManagerWorkspace extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${item.actual.toInt()}י', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                      Text('/ ${item.planned.toInt()}י', style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                      Text('${item.actual.toStringAsFixed(1)}י', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                      Text('/ ${item.planned.toStringAsFixed(1)}י', style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                     ],
                   ),
                   const SizedBox(height: 4),
