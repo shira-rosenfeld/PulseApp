@@ -2,7 +2,6 @@ class AppStrings {
   static const String appTitle = 'Pulse';
   static const String appSubtitle = 'ניהול תפוקות וביצוע';
   static const String searchPlaceholder = 'חיפוש יעד, תפוקה או עובד...';
-  static const String managerWorkspace = 'שולחן עבודה';
   static const String managerTag = 'מנהל';
   static const String advancedFilter = 'סינון מתקדם';
   static const String newProject = '+ פרויקט חדש';

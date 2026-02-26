@@ -79,14 +79,14 @@ void main() {
   });
 
   group('filteredWorkerTasksProvider', () {
-    test('OPEN filter returns newTask, inProgress, onHold', () {
+    test('OPEN filter returns inProgress and onHold, not newTask', () {
       final container = _makeContainer();
       addTearDown(container.dispose);
 
       container.read(taskFilterProvider.notifier).set('OPEN');
       final filtered = container.read(filteredWorkerTasksProvider);
 
-      expect(filtered.any((t) => t.status == WorkItemStatus.newTask), true);
+      expect(filtered.any((t) => t.status == WorkItemStatus.newTask), false);
       expect(filtered.any((t) => t.status == WorkItemStatus.inProgress), true);
       expect(filtered.any((t) => t.status == WorkItemStatus.onHold), true);
       expect(filtered.any((t) => t.status == WorkItemStatus.done), false);

@@ -135,23 +135,18 @@ class ManagerWorkspace extends ConsumerWidget {
 
   Widget _buildToolbar(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Text(AppStrings.managerWorkspace, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-        Row(
-          children: [
-            ElevatedButton.icon(
-              icon: const Icon(LucideIcons.plus, size: 14),
-              label: const Text(AppStrings.newProject, style: TextStyle(fontSize: 13)),
-              onPressed: () => showDialog(context: context, builder: (_) => const CreateTaskModal()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-            ),
-          ],
-        )
+        ElevatedButton.icon(
+          icon: const Icon(LucideIcons.plus, size: 14),
+          label: const Text(AppStrings.newProject, style: TextStyle(fontSize: 13)),
+          onPressed: () => showDialog(context: context, builder: (_) => const CreateTaskModal()),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2563EB),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          ),
+        ),
       ],
     );
   }

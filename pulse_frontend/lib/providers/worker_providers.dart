@@ -138,7 +138,7 @@ final filteredWorkerTasksProvider = Provider<List<WorkerTask>>((ref) {
 
   return tasks.where((task) {
     if (filter == 'ALL') return true;
-    if (filter == 'OPEN') return [WorkItemStatus.newTask, WorkItemStatus.inProgress, WorkItemStatus.onHold].contains(task.status);
+    if (filter == 'OPEN') return [WorkItemStatus.inProgress, WorkItemStatus.onHold].contains(task.status);
     if (filter == 'CLOSED') return [WorkItemStatus.done, WorkItemStatus.canceled].contains(task.status);
     return true;
   }).toList();

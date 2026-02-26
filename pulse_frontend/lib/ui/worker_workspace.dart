@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../core/app_strings.dart';
 import '../models/dtos/worker_task.dart';
 import '../models/enums/work_item_status.dart';
 import '../providers/worker_providers.dart';
@@ -124,7 +125,6 @@ class WorkerWorkspace extends ConsumerWidget {
   }
 
   PreferredSizeWidget _buildAppBar(WidgetRef ref) {
-    final week = ref.watch(weekProvider);
     final proxyUser = ref.watch(proxyUserProvider);
 
     return PreferredSize(
@@ -139,28 +139,20 @@ class WorkerWorkspace extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => ref.read(weekProvider.notifier).set(week < 52 ? week + 1 : 52),
-                          icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        Text('שבוע $week', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                        IconButton(
-                          onPressed: () => ref.read(weekProvider.notifier).set(week > 1 ? week - 1 : 1),
-                          icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      const Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                          Text('מערכת לניהול משימות', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                        ],
+                      ),
+                    ],
                   ),
-
                   Container(
                     decoration: BoxDecoration(color: const Color(0xFFEFF6FF), border: Border.all(color: const Color(0xFFDBEAFE)), borderRadius: BorderRadius.circular(999)),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -182,7 +174,7 @@ class WorkerWorkspace extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
