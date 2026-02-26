@@ -27,8 +27,6 @@ class ManagerWorkspace extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            _buildToolbar(context),
-            const SizedBox(height: 16),
             _buildTableHeader(),
             const Divider(height: 1),
             Expanded(
@@ -90,12 +88,13 @@ class ManagerWorkspace extends ConsumerWidget {
               children: [
                 const Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
                 const SizedBox(width: 8),
-                const Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(color: const Color(0xFFEFF6FF), borderRadius: BorderRadius.circular(999)),
-                  child: const Text(AppStrings.managerTag, style: TextStyle(fontSize: 11, color: Color(0xFF2563EB), fontWeight: FontWeight.bold)),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                    Text('ניהול מטלות', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                  ],
                 ),
               ],
             ),
@@ -112,47 +111,13 @@ class ManagerWorkspace extends ConsumerWidget {
                 ),
               ),
             ),
-            Row(
-              children: [
-                OutlinedButton.icon(
-                  icon: const Icon(LucideIcons.listFilter, size: 14),
-                  label: const Text(AppStrings.advancedFilter, style: TextStyle(fontSize: 13)),
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFF64748B)),
-                ),
-                const SizedBox(width: 12),
-                const CircleAvatar(
-                  backgroundColor: Color(0xFF1E293B),
-                  child: Text('י.י', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            )
+            const CircleAvatar(
+              backgroundColor: Color(0xFF1E293B),
+              child: Text('י.י', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildToolbar(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(AppStrings.managerWorkspace, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-        Row(
-          children: [
-            ElevatedButton.icon(
-              icon: const Icon(LucideIcons.plus, size: 14),
-              label: const Text(AppStrings.newProject, style: TextStyle(fontSize: 13)),
-              onPressed: () => showDialog(context: context, builder: (_) => const CreateTaskModal()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-            ),
-          ],
-        )
-      ],
     );
   }
 
@@ -322,8 +287,8 @@ class ManagerWorkspace extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${item.actual.toInt()}י', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                      Text('/ ${item.planned.toInt()}י', style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                      Text('${item.actual.toStringAsFixed(1)} ימים', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                      Text('/ ${item.planned.toStringAsFixed(1)} ימים', style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                     ],
                   ),
                   const SizedBox(height: 4),

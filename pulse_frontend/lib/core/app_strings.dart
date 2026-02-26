@@ -2,10 +2,6 @@ class AppStrings {
   static const String appTitle = 'Pulse';
   static const String appSubtitle = 'ניהול תפוקות וביצוע';
   static const String searchPlaceholder = 'חיפוש יעד, תפוקה או עובד...';
-  static const String managerWorkspace = 'שולחן עבודה';
-  static const String managerTag = 'מנהל';
-  static const String advancedFilter = 'סינון מתקדם';
-  static const String newProject = '+ פרויקט חדש';
   
   static const String hierarchyCol = 'היררכיה';
   static const String statusCol = 'סטטוס';
@@ -20,7 +16,7 @@ class AppStrings {
   static const String statusCanceled = 'בוטל';
 
   static const String internalWorker = 'עובד חברה';
-  static const String externalWorker = 'יועץ חיצוני';
+  static const String externalWorker = 'יועץ';
   static const String days = 'ימים';
   static const String noTasks = 'אין מטלות תחת תפוקה זו';
   

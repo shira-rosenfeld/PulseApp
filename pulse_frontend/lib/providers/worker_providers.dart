@@ -110,7 +110,7 @@ class WorkerTasksNotifier extends Notifier<List<WorkerTask>> {
   @override
   List<WorkerTask> build() => _initialTasks();
 
-  void updateHours(String id, double delta) {
+  void updateDays(String id, double delta) {
     ref.read(hasChangesProvider.notifier).set(true);
     state = state.map((task) {
       if (task.id != id) return task;
@@ -118,7 +118,7 @@ class WorkerTasksNotifier extends Notifier<List<WorkerTask>> {
       final newVal = (task.reportedThisWeek + delta) < 0 ? 0.0 : (task.reportedThisWeek + delta);
       WorkItemStatus newStatus = task.status;
 
-      // Optimistic UI: If hours reported on 'New' task, move to 'InProgress'
+      // Optimistic UI: If days reported on 'New' task, move to 'InProgress'
       if (newVal > 0 && task.status == WorkItemStatus.newTask) {
         newStatus = WorkItemStatus.inProgress;
       }
@@ -138,13 +138,13 @@ final filteredWorkerTasksProvider = Provider<List<WorkerTask>>((ref) {
 
   return tasks.where((task) {
     if (filter == 'ALL') return true;
-    if (filter == 'OPEN') return [WorkItemStatus.newTask, WorkItemStatus.inProgress, WorkItemStatus.onHold].contains(task.status);
+    if (filter == 'OPEN') return [WorkItemStatus.inProgress, WorkItemStatus.onHold].contains(task.status);
     if (filter == 'CLOSED') return [WorkItemStatus.done, WorkItemStatus.canceled].contains(task.status);
     return true;
   }).toList();
 });
 
-final totalWeeklyHoursProvider = Provider<double>((ref) {
+final totalWeeklyDaysProvider = Provider<double>((ref) {
   final tasks = ref.watch(workerTasksProvider);
   return tasks.fold(0.0, (sum, task) => sum + task.reportedThisWeek);
 });

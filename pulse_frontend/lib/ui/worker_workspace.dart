@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../core/app_strings.dart';
 import '../models/dtos/worker_task.dart';
 import '../models/enums/work_item_status.dart';
 import '../providers/worker_providers.dart';
@@ -124,7 +125,6 @@ class WorkerWorkspace extends ConsumerWidget {
   }
 
   PreferredSizeWidget _buildAppBar(WidgetRef ref) {
-    final week = ref.watch(weekProvider);
     final proxyUser = ref.watch(proxyUserProvider);
 
     return PreferredSize(
@@ -139,28 +139,20 @@ class WorkerWorkspace extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => ref.read(weekProvider.notifier).set(week < 52 ? week + 1 : 52),
-                          icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        Text('שבוע $week', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                        IconButton(
-                          onPressed: () => ref.read(weekProvider.notifier).set(week > 1 ? week - 1 : 1),
-                          icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      const Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                          Text('המטלות שלי', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                        ],
+                      ),
+                    ],
                   ),
-
                   Container(
                     decoration: BoxDecoration(color: const Color(0xFFEFF6FF), border: Border.all(color: const Color(0xFFDBEAFE)), borderRadius: BorderRadius.circular(999)),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -182,7 +174,7 @@ class WorkerWorkspace extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -193,7 +185,7 @@ class WorkerWorkspace extends ConsumerWidget {
   }
 
   Widget _buildKpiAndFilters(WidgetRef ref) {
-    final totalHours = ref.watch(totalWeeklyHoursProvider);
+    final totalDays = ref.watch(totalWeeklyDaysProvider);
     final filter = ref.watch(taskFilterProvider);
     final tasks = ref.watch(workerTasksProvider);
 
@@ -203,7 +195,7 @@ class WorkerWorkspace extends ConsumerWidget {
       children: [
         Row(
           children: [
-            _buildStatCard('סה"כ שעות השבוע', '${totalHours.toStringAsFixed(1)}ש', LucideIcons.clock, const Color(0xFFF0FDF4), const Color(0xFF16A34A), const Color(0xFF1E293B)),
+            _buildStatCard('סה"כ ימים השבוע', '${totalDays.toStringAsFixed(1)} ימים', LucideIcons.clock, const Color(0xFFF0FDF4), const Color(0xFF16A34A), const Color(0xFF1E293B)),
             const SizedBox(width: 12),
             _buildStatCard('משימות פתוחות', '${tasks.where((t) => ['10', '20', '30'].contains(t.status.code)).length}', LucideIcons.listTodo, const Color(0xFFFFF7ED), const Color(0xFFEA580C), const Color(0xFF1E293B)),
             const SizedBox(width: 12),
@@ -272,6 +264,7 @@ class WorkerWorkspace extends ConsumerWidget {
 
   Widget _buildTaskCard(WorkerTask task, WidgetRef ref) {
     final isLocked = ['40', '90'].contains(task.status.code);
+    final isDaysLocked = ['30', '40', '90'].contains(task.status.code);
     final isOverBudget = (task.totalReported + task.reportedThisWeek) > task.planned;
     final statusColor = _getStatusColor(task.status);
 
@@ -353,15 +346,15 @@ class WorkerWorkspace extends ConsumerWidget {
                           children: [
                             IconButton(
                               icon: const Icon(LucideIcons.minus, size: 12),
-                              onPressed: isLocked ? null : () => ref.read(workerTasksProvider.notifier).updateHours(task.id, -1),
+                              onPressed: isDaysLocked ? null : () => ref.read(workerTasksProvider.notifier).updateDays(task.id, -0.5),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                               color: const Color(0xFF64748B),
                             ),
-                            Text('${task.reportedThisWeek.toStringAsFixed(1)}ש', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                            Text('${task.reportedThisWeek.toStringAsFixed(1)} ימים', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                             IconButton(
                               icon: const Icon(LucideIcons.plus, size: 12),
-                              onPressed: isLocked ? null : () => ref.read(workerTasksProvider.notifier).updateHours(task.id, 1),
+                              onPressed: isDaysLocked ? null : () => ref.read(workerTasksProvider.notifier).updateDays(task.id, 0.5),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                               color: const Color(0xFF2563EB),
@@ -378,8 +371,8 @@ class WorkerWorkspace extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${(task.totalReported + task.reportedThisWeek).toStringAsFixed(1)}ש', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-                    Text('/ ${task.planned.toStringAsFixed(1)}ש', style: TextStyle(fontSize: 12, color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF94A3B8))),
+                    Text('${(task.totalReported + task.reportedThisWeek).toStringAsFixed(1)} ימים', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                    Text('/ ${task.planned.toStringAsFixed(1)} ימים', style: TextStyle(fontSize: 12, color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF94A3B8))),
                   ],
                 ),
                 const SizedBox(height: 4),

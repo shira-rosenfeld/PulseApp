@@ -54,12 +54,12 @@ app.MapDelete("/api/v1/tasks/{taskId}", async (string taskId, IHttpClientFactory
     });
 });
 
-// 4. Report Hours
-app.MapPost("/api/v1/tasks/report-hours", async (List<ReportHoursDto> reportData, IHttpClientFactory clientFactory) =>
+// 4. Report Days
+app.MapPost("/api/v1/tasks/report-days", async (List<ReportDaysDto> reportData, IHttpClientFactory clientFactory) =>
 {
     var client = clientFactory.CreateClient("SapApi");
-    // Example: await client.PostAsJsonAsync("Z_API_PULSE_REPORT_HOURS", reportData);
-    return Results.Ok(new { message = "Hours updated successfully." });
+    // Example: await client.PostAsJsonAsync("Z_API_PULSE_REPORT_DAYS", reportData);
+    return Results.Ok(new { message = "Days updated successfully." });
 });
 
 app.Run();
