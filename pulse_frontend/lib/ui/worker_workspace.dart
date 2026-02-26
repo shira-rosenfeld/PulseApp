@@ -272,6 +272,7 @@ class WorkerWorkspace extends ConsumerWidget {
 
   Widget _buildTaskCard(WorkerTask task, WidgetRef ref) {
     final isLocked = ['40', '90'].contains(task.status.code);
+    final isDaysLocked = ['30', '40', '90'].contains(task.status.code);
     final isOverBudget = (task.totalReported + task.reportedThisWeek) > task.planned;
     final statusColor = _getStatusColor(task.status);
 
@@ -353,7 +354,7 @@ class WorkerWorkspace extends ConsumerWidget {
                           children: [
                             IconButton(
                               icon: const Icon(LucideIcons.minus, size: 12),
-                              onPressed: isLocked ? null : () => ref.read(workerTasksProvider.notifier).updateDays(task.id, -0.5),
+                              onPressed: isDaysLocked ? null : () => ref.read(workerTasksProvider.notifier).updateDays(task.id, -0.5),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                               color: const Color(0xFF64748B),
@@ -361,7 +362,7 @@ class WorkerWorkspace extends ConsumerWidget {
                             Text('${task.reportedThisWeek.toStringAsFixed(1)}י', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                             IconButton(
                               icon: const Icon(LucideIcons.plus, size: 12),
-                              onPressed: isLocked ? null : () => ref.read(workerTasksProvider.notifier).updateDays(task.id, 0.5),
+                              onPressed: isDaysLocked ? null : () => ref.read(workerTasksProvider.notifier).updateDays(task.id, 0.5),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                               color: const Color(0xFF2563EB),
