@@ -244,39 +244,43 @@ class WorkerWorkspace extends ConsumerWidget {
           boxShadow: const [BoxShadow(color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1))],
         ),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Previous week (left arrow)
-            IconButton(
-              icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
-              onPressed: week > 1 ? () => ref.read(weekProvider.notifier).set(week - 1) : null,
-              padding: EdgeInsets.zero,
-              visualDensity: VisualDensity.compact,
-            ),
-            const SizedBox(width: 12),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${AppStrings.weekLabel} $week',
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
-                ),
-                Text(
-                  '${_fmtDate(weekStart)} - ${_fmtDate(weekEnd)}',
-                  style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
-                ),
-              ],
-            ),
-            const SizedBox(width: 12),
-            // Next week (right arrow)
-            IconButton(
-              icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
-              onPressed: () => ref.read(weekProvider.notifier).set(week + 1),
-              padding: EdgeInsets.zero,
-              visualDensity: VisualDensity.compact,
-            ),
-          ],
+        // Force LTR so < is always on the left (prev) and > on the right (next)
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Previous week (left arrow)
+              IconButton(
+                icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
+                onPressed: week > 1 ? () => ref.read(weekProvider.notifier).set(week - 1) : null,
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+              const SizedBox(width: 12),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${AppStrings.weekLabel} $week',
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+                  ),
+                  Text(
+                    '${_fmtDate(weekStart)} - ${_fmtDate(weekEnd)}',
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 12),
+              // Next week (right arrow)
+              IconButton(
+                icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
+                onPressed: () => ref.read(weekProvider.notifier).set(week + 1),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+          ),
         ),
       ),
     );

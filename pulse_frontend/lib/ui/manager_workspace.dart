@@ -130,6 +130,7 @@ class ManagerWorkspace extends ConsumerWidget {
           Expanded(flex: 5, child: Text(AppStrings.hierarchyCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
           Expanded(flex: 2, child: Text(AppStrings.workerCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
           Expanded(flex: 2, child: Text(AppStrings.dueDateCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
+          Expanded(flex: 2, child: Text(AppStrings.statusCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
           Expanded(flex: 2, child: Text(AppStrings.progressCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
           Expanded(flex: 1, child: Center(child: Text(AppStrings.actionsCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))))),
         ],
@@ -242,8 +243,6 @@ class ManagerWorkspace extends ConsumerWidget {
                     decoration: isCanceled ? TextDecoration.lineThrough : null,
                   ),
                 ),
-                const SizedBox(height: 2),
-                StatusBadge(status: item.status),
               ],
             ),
           ),
@@ -300,7 +299,12 @@ class ManagerWorkspace extends ConsumerWidget {
               ],
             ),
           ),
-          // Column 4: תכנון מול ביצוע
+          // Column 4: סטטוס
+          Expanded(
+            flex: 2,
+            child: StatusBadge(status: item.status),
+          ),
+          // Column 5: תכנון מול ביצוע
           Expanded(
             flex: 2,
             child: Padding(
