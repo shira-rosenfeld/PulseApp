@@ -91,6 +91,7 @@ class ManagerWorkspace extends ConsumerWidget {
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                     Text('ניהול מטלות', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
@@ -302,7 +303,10 @@ class ManagerWorkspace extends ConsumerWidget {
           // Column 4: סטטוס
           Expanded(
             flex: 2,
-            child: StatusBadge(status: item.status),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: StatusBadge(status: item.status),
+            ),
           ),
           // Column 5: תכנון מול ביצוע
           Expanded(
