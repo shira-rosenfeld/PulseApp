@@ -8,6 +8,7 @@ class WorkItem {
   final Worker worker;
   final double planned;
   final double actual;
+  final String? dueDate; // e.g. '2026-02-14'
 
   WorkItem({
     required this.id,
@@ -16,5 +17,6 @@ class WorkItem {
     required this.worker,
     required this.planned,
     required this.actual,
+    this.dueDate,
   });
 }

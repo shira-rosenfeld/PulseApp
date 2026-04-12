@@ -3,10 +3,11 @@ class AppStrings {
   static const String appSubtitle = 'ניהול תפוקות וביצוע';
   static const String searchPlaceholder = 'חיפוש יעד, תפוקה או עובד...';
   
-  static const String hierarchyCol = 'היררכיה';
+  static const String hierarchyCol = 'שם המטלה';
   static const String statusCol = 'סטטוס';
   static const String workerCol = 'אחראי ביצוע';
-  static const String progressCol = 'תכנון vs ביצוע';
+  static const String dueDateCol = 'תאריך יעד';
+  static const String progressCol = 'תכנון מול ביצוע';
   static const String actionsCol = 'פעולות';
   
   static const String statusNew = 'חדש';
@@ -36,4 +37,14 @@ class AppStrings {
   static const String unsavedChanges = 'יש שינויים שלא נשמרו';
   static const String saveChanges = 'שמור שינויים';
   static const String noTasksToShow = 'אין מטלות להצגה';
+
+  static const String plannedDays = 'מספר ימים מתוכנן';
+  static const String endDate = 'תאריך סיום';
+  static const String sortBy = 'מיין לפי';
+  static const String sortStatusDate = 'סטטוס ותאריך יעד';
+  static const String sortDate = 'תאריך יעד';
+  static const String sortStatus = 'סטטוס';
+  static const String weekLabel = 'שבוע';
+  static const String startDateLabel = 'התחלה';
+  static const String dueDateLabel = 'יעד';
 }

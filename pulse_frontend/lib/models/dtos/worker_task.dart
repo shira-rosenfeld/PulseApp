@@ -10,6 +10,8 @@ class WorkerTask {
   final double totalReported;
   final double reportedThisWeek;
   final String? actualStart;
+  final String? dueDate;    // planned completion date (for sorting + display)
+  final String? actualEnd;  // actual end/completion date (for display)
   final WorkerType workerType;
 
   WorkerTask({
@@ -21,6 +23,8 @@ class WorkerTask {
     required this.totalReported,
     required this.reportedThisWeek,
     this.actualStart,
+    this.dueDate,
+    this.actualEnd,
     required this.workerType,
   });
 
@@ -32,11 +36,13 @@ class WorkerTask {
       id: id,
       path: path,
       desc: desc,
-      status: status?? this.status,
+      status: status ?? this.status,
       planned: planned,
       totalReported: totalReported,
-      reportedThisWeek: reportedThisWeek?? this.reportedThisWeek,
+      reportedThisWeek: reportedThisWeek ?? this.reportedThisWeek,
       actualStart: actualStart,
+      dueDate: dueDate,
+      actualEnd: actualEnd,
       workerType: workerType,
     );
   }

@@ -78,26 +78,29 @@ class CreateTaskModal extends StatefulWidget {
 }
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
-  String? _workerType;
   String? _selectedWorker;
+  int _plannedDays = 1;
   final _taskNameController = TextEditingController();
 
-  static const _internalWorkers = [
+  // Combined list of all workers (backend will handle both types)
+  static const _allWorkers = [
     'יוסי כהן', 'דנה לוי', 'שירה רוזנפלד', 'רון שפירא',
     'אבי גולן', 'נועה מזרחי', 'עמית ברקוביץ',
-  ];
-
-  static const _externalWorkers = [
     'מיכאל ברג', "ג'ון סמית", 'ליאת פרידמן', 'ספיר אדרי',
   ];
-
-  List<String> get _currentWorkers =>
-      _workerType == 'INTERNAL' ? _internalWorkers : _externalWorkers;
 
   static BoxDecoration get _dropdownDecoration => BoxDecoration(
         border: Border.all(color: const Color(0xFFCBD5E1)),
         borderRadius: BorderRadius.circular(8),
       );
+
+  String get _computedDueDate {
+    final due = DateTime.now().add(Duration(days: _plannedDays));
+    final d = due.day.toString().padLeft(2, '0');
+    final m = due.month.toString().padLeft(2, '0');
+    final y = due.year.toString();
+    return '$d/$m/$y';
+  }
 
   @override
   void dispose() {
@@ -137,6 +140,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // שם המטלה
             const Text('שם המטלה', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
             const SizedBox(height: 8),
             TextField(
@@ -148,45 +152,85 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text('סוג עובד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            // אחראי ביצוע (combined list, no worker-type pre-selection needed)
+            const Text('אחראי ביצוע', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
             const SizedBox(height: 8),
             Container(
               decoration: _dropdownDecoration,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: DropdownButton<String>(
-                value: _workerType,
-                hint: const Text('בחר סוג עובד...', style: TextStyle(color: Color(0xFF94A3B8))),
+                value: _selectedWorker,
+                hint: const Text('בחר עובד...', style: TextStyle(color: Color(0xFF94A3B8))),
                 isExpanded: true,
                 underline: const SizedBox(),
-                items: const [
-                  DropdownMenuItem(value: 'INTERNAL', child: Text('עובד חברה')),
-                  DropdownMenuItem(value: 'EXTERNAL', child: Text('יועץ חיצוני')),
-                ],
-                onChanged: (val) => setState(() {
-                  _workerType = val;
-                  _selectedWorker = null;
-                }),
+                items: _allWorkers
+                    .map((name) => DropdownMenuItem(value: name, child: Text(name)))
+                    .toList(),
+                onChanged: (val) => setState(() => _selectedWorker = val),
               ),
             ),
-            if (_workerType != null) ...[
-              const SizedBox(height: 16),
-              const Text('אחראי ביצוע', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
-              const SizedBox(height: 8),
-              Container(
-                decoration: _dropdownDecoration,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: DropdownButton<String>(
-                  value: _selectedWorker,
-                  hint: const Text('בחר עובד...', style: TextStyle(color: Color(0xFF94A3B8))),
-                  isExpanded: true,
-                  underline: const SizedBox(),
-                  items: _currentWorkers
-                      .map((name) => DropdownMenuItem(value: name, child: Text(name)))
-                      .toList(),
-                  onChanged: (val) => setState(() => _selectedWorker = val),
-                ),
+            const SizedBox(height: 16),
+            // מספר ימים מתוכנן
+            const Text('מספר ימים מתוכנן', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            Container(
+              decoration: _dropdownDecoration,
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(LucideIcons.minus, size: 16),
+                    onPressed: _plannedDays > 1 ? () => setState(() => _plannedDays--) : null,
+                    color: const Color(0xFF64748B),
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        '$_plannedDays ימים',
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(LucideIcons.plus, size: 16),
+                    onPressed: () => setState(() => _plannedDays++),
+                    color: const Color(0xFF2563EB),
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ],
               ),
-            ],
+            ),
+            const SizedBox(height: 16),
+            // תאריך יעד (computed, read-only)
+            const Text('תאריך יעד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(LucideIcons.calendar, size: 14, color: Color(0xFF94A3B8)),
+                  const SizedBox(width: 8),
+                  Text(
+                    _computedDueDate,
+                    style: const TextStyle(fontSize: 13, color: Color(0xFF334155), fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '(היום + מספר ימים)',
+                    style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

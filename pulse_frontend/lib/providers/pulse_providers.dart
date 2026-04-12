@@ -44,6 +44,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'יוסי כהן', type: WorkerType.internal),
               planned: 10,
               actual: 9,
+              dueDate: '15/01/2026',
             ),
             WorkItem(
               id: 'TASK-1002',
@@ -52,6 +53,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'דנה לוי', type: WorkerType.internal),
               planned: 8,
               actual: 5,
+              dueDate: '18/01/2026',
             ),
             WorkItem(
               id: 'TASK-1003',
@@ -60,6 +62,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'מיכאל ברג', type: WorkerType.external),
               planned: 6,
               actual: 6,
+              dueDate: '12/01/2026',
             ),
           ],
         ),
@@ -74,6 +77,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'שירה רוזנפלד', type: WorkerType.internal),
               planned: 20,
               actual: 14,
+              dueDate: '04/02/2026',
             ),
             WorkItem(
               id: 'TASK-1005',
@@ -82,6 +86,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'שירה רוזנפלד', type: WorkerType.internal),
               planned: 16,
               actual: 10,
+              dueDate: '05/02/2026',
             ),
             WorkItem(
               id: 'TASK-1006',
@@ -90,6 +95,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'אבי גולן', type: WorkerType.internal),
               planned: 12,
               actual: 0,
+              dueDate: '18/02/2026',
             ),
           ],
         ),
@@ -104,6 +110,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'רון שפירא', type: WorkerType.internal),
               planned: 18,
               actual: 20,
+              dueDate: '28/01/2026',
             ),
             WorkItem(
               id: 'TASK-1008',
@@ -112,6 +119,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'רון שפירא', type: WorkerType.internal),
               planned: 10,
               actual: 0,
+              dueDate: '10/02/2026',
             ),
             WorkItem(
               id: 'TASK-1009',
@@ -120,6 +128,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: "ג'ון סמית", type: WorkerType.external),
               planned: 5,
               actual: 2,
+              dueDate: '22/01/2026',
             ),
           ],
         ),
@@ -141,6 +150,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'יוסי כהן', type: WorkerType.internal),
               planned: 8,
               actual: 8,
+              dueDate: '20/02/2026',
             ),
             WorkItem(
               id: 'TASK-1011',
@@ -149,6 +159,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'דנה לוי', type: WorkerType.internal),
               planned: 12,
               actual: 4,
+              dueDate: '05/03/2026',
             ),
           ],
         ),
@@ -163,6 +174,7 @@ final wbsDataProvider = Provider<List<Target>>((ref) {
               worker: Worker(name: 'אבי גולן', type: WorkerType.internal),
               planned: 10,
               actual: 0,
+              dueDate: '12/03/2026',
             ),
             WorkItem(
               id: 'TASK-1013',
