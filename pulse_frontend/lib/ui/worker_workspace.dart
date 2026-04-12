@@ -465,11 +465,37 @@ class WorkerWorkspace extends ConsumerWidget {
                 const SizedBox(height: 12),
                 const Divider(height: 1, color: Color(0xFFF1F5F9)),
                 const SizedBox(height: 8),
+                // תכנון מול ביצוע: labeled planned vs actual
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${(task.totalReported + task.reportedThisWeek).toStringAsFixed(1)} ימים', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-                    Text('/ ${task.planned.toStringAsFixed(1)} ימים', style: TextStyle(fontSize: 12, color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF94A3B8))),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 12),
+                        children: [
+                          const TextSpan(text: 'בביצוע: ', style: TextStyle(color: Color(0xFF64748B))),
+                          TextSpan(
+                            text: (task.totalReported + task.reportedThisWeek).toStringAsFixed(1),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF1E293B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 12),
+                        children: [
+                          const TextSpan(text: 'תכנון: ', style: TextStyle(color: Color(0xFF94A3B8))),
+                          TextSpan(
+                            text: task.planned.toStringAsFixed(1),
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -483,48 +509,25 @@ class WorkerWorkspace extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Date row: start date + due/end date
+                // Due date row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    if (isLocked) const Icon(LucideIcons.lock, size: 12, color: Color(0xFFCBD5E1))
+                    else const SizedBox(),
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            const Icon(LucideIcons.calendar, size: 10, color: Color(0xFF94A3B8)),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${AppStrings.startDateLabel}: ${task.actualStart ?? "טרם החל"}',
-                              style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
-                            ),
-                          ],
-                        ),
-                        if (task.actualEnd != null || task.dueDate != null) ...[
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Icon(
-                                task.actualEnd != null ? LucideIcons.circleCheck : LucideIcons.calendar,
-                                size: 10,
-                                color: task.actualEnd != null ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                task.actualEnd != null
-                                    ? '${AppStrings.endDate}: ${task.actualEnd}'
-                                    : '${AppStrings.dueDateLabel}: ${task.dueDate}',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: task.actualEnd != null ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
-                                ),
-                              ),
-                            ],
+                        Text(
+                          task.dueDate ?? '—',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: task.dueDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
                           ),
-                        ],
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(LucideIcons.calendar, size: 11, color: Color(0xFF94A3B8)),
                       ],
                     ),
-                    if (isLocked) const Icon(LucideIcons.lock, size: 12, color: Color(0xFFCBD5E1)),
                   ],
                 ),
               ],
