@@ -104,11 +104,12 @@ class ManagerWorkspace extends ConsumerWidget {
               child: TextField(
                 onChanged: (val) => ref.read(searchQueryProvider.notifier).set(val),
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: AppStrings.searchPlaceholder,
                   prefixIcon: const Icon(LucideIcons.search, size: 16, color: Color(0xFF94A3B8)),
                   filled: true, fillColor: const Color(0xFFF1F5F9),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 ),
               ),
             ),
