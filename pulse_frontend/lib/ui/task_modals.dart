@@ -79,7 +79,8 @@ class CreateTaskModal extends StatefulWidget {
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
   String? _selectedWorker;
-  DateTime? _selectedDueDate;
+  DateTime? _startDate;
+  int _plannedDays = 1;
   final _taskNameController = TextEditingController();
 
   // Combined list of all workers (backend will handle both types)
@@ -94,23 +95,27 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         borderRadius: BorderRadius.circular(8),
       );
 
-  String? get _formattedDueDate {
-    if (_selectedDueDate == null) return null;
-    final d = _selectedDueDate!.day.toString().padLeft(2, '0');
-    final m = _selectedDueDate!.month.toString().padLeft(2, '0');
-    final y = _selectedDueDate!.year.toString();
-    return '$d/$m/$y';
+  static String _fmt(DateTime d) {
+    final day = d.day.toString().padLeft(2, '0');
+    final m = d.month.toString().padLeft(2, '0');
+    return '$day/$m/${d.year}';
   }
 
-  Future<void> _pickDate() async {
+  // Computed due date = start date + planned days (null until start date chosen)
+  String? get _computedDueDate {
+    if (_startDate == null) return null;
+    return _fmt(_startDate!.add(Duration(days: _plannedDays)));
+  }
+
+  Future<void> _pickStartDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDueDate ?? now,
-      firstDate: now,
+      initialDate: _startDate ?? now,
+      firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
-    if (picked != null) setState(() => _selectedDueDate = picked);
+    if (picked != null) setState(() => _startDate = picked);
   }
 
   @override
@@ -181,11 +186,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               ),
             ),
             const SizedBox(height: 16),
-            // תאריך יעד — date picker
-            const Text('תאריך יעד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            // תאריך התחלה — date picker
+            const Text('תאריך התחלה', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
             const SizedBox(height: 8),
             InkWell(
-              onTap: _pickDate,
+              onTap: _pickStartDate,
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 width: double.infinity,
@@ -198,18 +203,80 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 child: Row(
                   children: [
                     Icon(LucideIcons.calendar, size: 16,
-                        color: _selectedDueDate != null ? const Color(0xFF2563EB) : const Color(0xFF94A3B8)),
+                        color: _startDate != null ? const Color(0xFF2563EB) : const Color(0xFF94A3B8)),
                     const SizedBox(width: 8),
                     Text(
-                      _formattedDueDate ?? 'בחר תאריך...',
+                      _startDate != null ? _fmt(_startDate!) : 'בחר תאריך התחלה...',
                       style: TextStyle(
                         fontSize: 13,
-                        color: _selectedDueDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
-                        fontWeight: _selectedDueDate != null ? FontWeight.w500 : FontWeight.normal,
+                        color: _startDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
+                        fontWeight: _startDate != null ? FontWeight.w500 : FontWeight.normal,
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // מספר ימים מתוכנן — stepper
+            const Text('מספר ימים מתוכנן', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            Container(
+              decoration: _dropdownDecoration,
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(LucideIcons.minus, size: 16),
+                    onPressed: _plannedDays > 1 ? () => setState(() => _plannedDays--) : null,
+                    color: const Color(0xFF64748B),
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        '$_plannedDays ימים',
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(LucideIcons.plus, size: 16),
+                    onPressed: () => setState(() => _plannedDays++),
+                    color: const Color(0xFF2563EB),
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // תאריך יעד — computed read-only (start date + planned days)
+            const Text('תאריך יעד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(LucideIcons.calendar, size: 14,
+                      color: _computedDueDate != null ? const Color(0xFF2563EB) : const Color(0xFFCBD5E1)),
+                  const SizedBox(width: 8),
+                  Text(
+                    _computedDueDate ?? 'יחושב לאחר בחירת תאריך התחלה',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: _computedDueDate != null ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                      fontWeight: _computedDueDate != null ? FontWeight.w500 : FontWeight.normal,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
