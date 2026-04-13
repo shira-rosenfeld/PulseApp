@@ -80,7 +80,7 @@ class ManagerWorkspace extends ConsumerWidget {
           color: Colors.white,
           border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -94,7 +94,7 @@ class ManagerWorkspace extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                    Text('ניהול מטלות', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                    Text('רשימת יעדים', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                   ],
                 ),
               ],

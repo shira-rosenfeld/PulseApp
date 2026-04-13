@@ -79,7 +79,7 @@ class CreateTaskModal extends StatefulWidget {
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
   String? _selectedWorker;
-  int _plannedDays = 1;
+  DateTime? _selectedDueDate;
   final _taskNameController = TextEditingController();
 
   // Combined list of all workers (backend will handle both types)
@@ -94,12 +94,23 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         borderRadius: BorderRadius.circular(8),
       );
 
-  String get _computedDueDate {
-    final due = DateTime.now().add(Duration(days: _plannedDays));
-    final d = due.day.toString().padLeft(2, '0');
-    final m = due.month.toString().padLeft(2, '0');
-    final y = due.year.toString();
+  String? get _formattedDueDate {
+    if (_selectedDueDate == null) return null;
+    final d = _selectedDueDate!.day.toString().padLeft(2, '0');
+    final m = _selectedDueDate!.month.toString().padLeft(2, '0');
+    final y = _selectedDueDate!.year.toString();
     return '$d/$m/$y';
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDueDate ?? now,
+      firstDate: now,
+      lastDate: DateTime(2030),
+    );
+    if (picked != null) setState(() => _selectedDueDate = picked);
   }
 
   @override
@@ -170,65 +181,35 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               ),
             ),
             const SizedBox(height: 16),
-            // מספר ימים מתוכנן
-            const Text('מספר ימים מתוכנן', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
-            const SizedBox(height: 8),
-            Container(
-              decoration: _dropdownDecoration,
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(LucideIcons.minus, size: 16),
-                    onPressed: _plannedDays > 1 ? () => setState(() => _plannedDays--) : null,
-                    color: const Color(0xFF64748B),
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        '$_plannedDays ימים',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(LucideIcons.plus, size: 16),
-                    onPressed: () => setState(() => _plannedDays++),
-                    color: const Color(0xFF2563EB),
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // תאריך יעד (computed, read-only)
+            // תאריך יעד — date picker
             const Text('תאריך יעד', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
             const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(LucideIcons.calendar, size: 14, color: Color(0xFF94A3B8)),
-                  const SizedBox(width: 8),
-                  Text(
-                    _computedDueDate,
-                    style: const TextStyle(fontSize: 13, color: Color(0xFF334155), fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    '(היום + מספר ימים)',
-                    style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
-                  ),
-                ],
+            InkWell(
+              onTap: _pickDate,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: const Color(0xFFCBD5E1)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.calendar, size: 16,
+                        color: _selectedDueDate != null ? const Color(0xFF2563EB) : const Color(0xFF94A3B8)),
+                    const SizedBox(width: 8),
+                    Text(
+                      _formattedDueDate ?? 'בחר תאריך...',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: _selectedDueDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
+                        fontWeight: _selectedDueDate != null ? FontWeight.w500 : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
