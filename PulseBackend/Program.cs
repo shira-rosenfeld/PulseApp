@@ -1,5 +1,6 @@
 // using Microsoft.AspNetCore.Authentication.Negotiate; // Re-enable with auth
 using PulseBackend.Models.DTOs;
+using PulseBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 //     options.FallbackPolicy = options.DefaultPolicy;
 // });
 
-// Configure internal SAP API connection
-builder.Services.AddHttpClient("SapApi", client =>
+// Configure internal SAP API connection (base URL loaded from appsettings.json)
+builder.Services.AddHttpClient("SapApi", (sp, client) =>
 {
-    client.BaseAddress = new Uri("https://sap-internal.network/api/");
+    var config = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(config["SapApi:BaseUrl"]!);
 });
+
+builder.Services.AddScoped<ISapApiService, SapApiService>();
 
 var app = builder.Build();
 
@@ -36,29 +40,33 @@ app.MapGet("/api/v1/user/profile", (HttpContext context) =>
 });
 
 // 2. Fetch Hierarchy
-app.MapGet("/api/v1/wbs/hierarchy", async (IHttpClientFactory clientFactory) =>
+app.MapGet("/api/v1/wbs/hierarchy", async (ISapApiService sapApi) =>
 {
-    var client = clientFactory.CreateClient("SapApi");
-    // var response = await client.GetAsync("Z_API_PULSE_GET_HIERARCHY");
-    return Results.Ok(new List<TargetDto>()); // Placeholder mock return
+    var hierarchy = await sapApi.GetHierarchyAsync();
+    return Results.Ok(hierarchy);
 });
 
 // 3. Delete / Cancel Task
-app.MapDelete("/api/v1/tasks/{taskId}", async (string taskId, IHttpClientFactory clientFactory) =>
+app.MapDelete("/api/v1/tasks/{taskId}", async (string taskId, ISapApiService sapApi) =>
 {
-    var client = clientFactory.CreateClient("SapApi");
-    return Results.Ok(new 
-    { 
+    if (string.IsNullOrWhiteSpace(taskId))
+        return Results.BadRequest(new { error = "taskId is required." });
+
+    await sapApi.CancelTaskAsync(taskId);
+    return Results.Ok(new
+    {
         message = $"Task {taskId} successfully canceled.",
         confirmationUrl = $"https://sap-internal.network/api/confirmations/{Guid.NewGuid()}"
     });
 });
 
 // 4. Report Days
-app.MapPost("/api/v1/tasks/report-days", async (List<ReportDaysDto> reportData, IHttpClientFactory clientFactory) =>
+app.MapPost("/api/v1/tasks/report-days", async (List<ReportDaysDto> reportData, ISapApiService sapApi) =>
 {
-    var client = clientFactory.CreateClient("SapApi");
-    // Example: await client.PostAsJsonAsync("Z_API_PULSE_REPORT_DAYS", reportData);
+    if (reportData is null || reportData.Count == 0)
+        return Results.BadRequest(new { error = "reportData must not be empty." });
+
+    await sapApi.ReportDaysAsync(reportData);
     return Results.Ok(new { message = "Days updated successfully." });
 });
 
