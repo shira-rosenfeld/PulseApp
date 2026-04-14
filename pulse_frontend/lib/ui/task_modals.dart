@@ -35,7 +35,6 @@ class _HebrewDatePickerLocalizations extends DefaultMaterialLocalizations {
   @override String get datePickerHelpText     => _base.datePickerHelpText;
   @override String get nextMonthTooltip       => _base.nextMonthTooltip;
   @override String get previousMonthTooltip   => _base.previousMonthTooltip;
-  @override String get dateHelpText           => _base.dateHelpText;
   @override String get invalidDateFormatLabel => _base.invalidDateFormatLabel;
   @override String get dateOutOfRangeLabel    => _base.dateOutOfRangeLabel;
   @override List<String> get narrowWeekdays   => _base.narrowWeekdays;
@@ -44,6 +43,32 @@ class _HebrewDatePickerLocalizations extends DefaultMaterialLocalizations {
   @override String formatYear(DateTime date)      => _base.formatYear(date);
   @override String formatFullDate(DateTime date)  => _base.formatFullDate(date);
   @override String get selectYearSemanticsLabel => _base.selectYearSemanticsLabel;
+
+  // Input-mode fixes: show Hebrew label and use DD/MM/YYYY instead of US format.
+  @override String get dateInputLabel => _base.dateInputLabel;
+  @override String get dateHelpText   => 'dd/mm/yyyy';
+
+  @override
+  String formatCompactDate(DateTime date) {
+    final d = date.day.toString().padLeft(2, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    return '$d/$m/${date.year}';
+  }
+
+  @override
+  DateTime? parseCompactDate(String? inputString) {
+    if (inputString == null || inputString.trim().isEmpty) return null;
+    final parts = inputString.trim().split('/');
+    if (parts.length != 3) return null;
+    final day   = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final year  = int.tryParse(parts[2]);
+    if (day == null || month == null || year == null) return null;
+    final date = DateTime(year, month, day);
+    // DateTime normalises invalid dates (e.g. 31/02 → March); reject those.
+    if (date.day != day || date.month != month || date.year != year) return null;
+    return date;
+  }
 }
 
 class _MaterialLocalizationsDelegate
@@ -188,8 +213,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           datePickerTheme: const DatePickerThemeData(
-            // Smaller headline prevents the full date from being truncated.
-            headerHeadlineStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            // Reduced font size so the full Hebrew date fits without truncation.
+            headerHeadlineStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         child: _DatePickerLocalizationsOverride(child: child!),
