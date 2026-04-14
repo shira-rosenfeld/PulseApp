@@ -80,7 +80,7 @@ class ManagerWorkspace extends ConsumerWidget {
           color: Colors.white,
           border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -91,9 +91,10 @@ class ManagerWorkspace extends ConsumerWidget {
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                    Text('ניהול מטלות', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                    Text('רשימת יעדים', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                   ],
                 ),
               ],
@@ -103,11 +104,13 @@ class ManagerWorkspace extends ConsumerWidget {
               child: TextField(
                 onChanged: (val) => ref.read(searchQueryProvider.notifier).set(val),
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: AppStrings.searchPlaceholder,
                   prefixIcon: const Icon(LucideIcons.search, size: 16, color: Color(0xFF94A3B8)),
+                  prefixIconConstraints: const BoxConstraints(minWidth: 32, minHeight: 0),
                   filled: true, fillColor: const Color(0xFFF1F5F9),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 ),
               ),
             ),
@@ -128,8 +131,9 @@ class ManagerWorkspace extends ConsumerWidget {
       child: const Row(
         children: [
           Expanded(flex: 5, child: Text(AppStrings.hierarchyCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
-          Expanded(flex: 2, child: Center(child: Text(AppStrings.statusCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))))),
           Expanded(flex: 2, child: Text(AppStrings.workerCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
+          Expanded(flex: 2, child: Text(AppStrings.dueDateCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
+          Expanded(flex: 2, child: Text(AppStrings.statusCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
           Expanded(flex: 2, child: Text(AppStrings.progressCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
           Expanded(flex: 1, child: Center(child: Text(AppStrings.actionsCol, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))))),
         ],
@@ -227,6 +231,7 @@ class ManagerWorkspace extends ConsumerWidget {
       child: Row(
         children: [
           const SizedBox(width: 48),
+          // Column 1: שם המטלה
           Expanded(
             flex: 5,
             child: Column(
@@ -244,7 +249,7 @@ class ManagerWorkspace extends ConsumerWidget {
               ],
             ),
           ),
-          Expanded(flex: 2, child: Center(child: StatusBadge(status: item.status))),
+          // Column 2: אחראי ביצוע
           Expanded(
             flex: 2,
             child: Row(
@@ -265,23 +270,51 @@ class ManagerWorkspace extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.worker.name, style: const TextStyle(fontSize: 12, color: Color(0xFF334155))),
-                    Text(
-                      item.worker.type == WorkerType.internal ? AppStrings.internalWorker : AppStrings.externalWorker,
-                      style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
-                    ),
-                  ],
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.worker.name, style: const TextStyle(fontSize: 12, color: Color(0xFF334155))),
+                      Text(
+                        item.worker.type == WorkerType.internal ? AppStrings.internalWorker : AppStrings.externalWorker,
+                        style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
+          // Column 3: תאריך יעד
+          Expanded(
+            flex: 2,
+            child: Row(
+              children: [
+                const Icon(LucideIcons.calendar, size: 12, color: Color(0xFF94A3B8)),
+                const SizedBox(width: 4),
+                Text(
+                  item.dueDate ?? '—',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: item.dueDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Column 4: סטטוס
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: StatusBadge(status: item.status),
+            ),
+          ),
+          // Column 5: תכנון מול ביצוע
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Column(
                 children: [
                   Row(
@@ -305,6 +338,7 @@ class ManagerWorkspace extends ConsumerWidget {
               ),
             ),
           ),
+          // Column 5: פעולות
           Expanded(
             flex: 1,
             child: Center(

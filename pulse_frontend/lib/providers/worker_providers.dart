@@ -35,6 +35,15 @@ class HasChangesNotifier extends Notifier<bool> {
 
 final hasChangesProvider = NotifierProvider<HasChangesNotifier, bool>(HasChangesNotifier.new);
 
+// Sort order: STATUS_DATE = status then due date, DATE = due date only, STATUS = status only
+class SortOrderNotifier extends Notifier<String> {
+  @override
+  String build() => 'STATUS_DATE';
+  void set(String v) => state = v;
+}
+
+final sortOrderProvider = NotifierProvider<SortOrderNotifier, String>(SortOrderNotifier.new);
+
 final workerTasksProvider = NotifierProvider<WorkerTasksNotifier, List<WorkerTask>>(WorkerTasksNotifier.new);
 
 List<WorkerTask> _initialTasks() {
@@ -47,7 +56,8 @@ List<WorkerTask> _initialTasks() {
       planned: 20,
       totalReported: 14,
       reportedThisWeek: 0,
-      actualStart: '2026-01-15',
+      actualStart: '15/01/2026',
+      dueDate: '04/02/2026',
       workerType: WorkerType.internal,
     ),
     WorkerTask(
@@ -58,7 +68,8 @@ List<WorkerTask> _initialTasks() {
       planned: 16,
       totalReported: 10,
       reportedThisWeek: 0,
-      actualStart: '2026-01-20',
+      actualStart: '20/01/2026',
+      dueDate: '05/02/2026',
       workerType: WorkerType.internal,
     ),
     WorkerTask(
@@ -69,6 +80,7 @@ List<WorkerTask> _initialTasks() {
       planned: 12,
       totalReported: 0,
       reportedThisWeek: 0,
+      dueDate: '18/02/2026',
       workerType: WorkerType.internal,
     ),
     WorkerTask(
@@ -79,7 +91,8 @@ List<WorkerTask> _initialTasks() {
       planned: 8,
       totalReported: 5,
       reportedThisWeek: 0,
-      actualStart: '2026-01-10',
+      actualStart: '10/01/2026',
+      dueDate: '18/01/2026',
       workerType: WorkerType.internal,
     ),
     WorkerTask(
@@ -90,7 +103,9 @@ List<WorkerTask> _initialTasks() {
       planned: 10,
       totalReported: 9,
       reportedThisWeek: 0,
-      actualStart: '2026-01-05',
+      actualStart: '05/01/2026',
+      dueDate: '15/01/2026',
+      actualEnd: '14/01/2026',
       workerType: WorkerType.internal,
     ),
     WorkerTask(
@@ -132,16 +147,65 @@ class WorkerTasksNotifier extends Notifier<List<WorkerTask>> {
   }
 }
 
+// Status priority for sorting: lower number = higher priority (shown first)
+int _statusPriority(WorkItemStatus status) {
+  switch (status) {
+    case WorkItemStatus.inProgress: return 1;
+    case WorkItemStatus.newTask:    return 2;
+    case WorkItemStatus.onHold:     return 3;
+    case WorkItemStatus.done:       return 4;
+    case WorkItemStatus.canceled:   return 5;
+  }
+}
+
+// Parse DD/MM/YYYY date string for comparison (returns null if invalid)
+DateTime? _parseDate(String? s) {
+  if (s == null) return null;
+  final parts = s.split('/');
+  if (parts.length != 3) return null;
+  final d = int.tryParse(parts[0]);
+  final m = int.tryParse(parts[1]);
+  final y = int.tryParse(parts[2]);
+  if (d == null || m == null || y == null) return null;
+  return DateTime(y, m, d);
+}
+
 final filteredWorkerTasksProvider = Provider<List<WorkerTask>>((ref) {
   final filter = ref.watch(taskFilterProvider);
+  final sortOrder = ref.watch(sortOrderProvider);
   final tasks = ref.watch(workerTasksProvider);
 
-  return tasks.where((task) {
+  final filtered = tasks.where((task) {
     if (filter == 'ALL') return true;
     if (filter == 'OPEN') return [WorkItemStatus.inProgress, WorkItemStatus.onHold].contains(task.status);
     if (filter == 'CLOSED') return [WorkItemStatus.done, WorkItemStatus.canceled].contains(task.status);
     return true;
   }).toList();
+
+  filtered.sort((a, b) {
+    if (sortOrder == 'STATUS') {
+      return _statusPriority(a.status).compareTo(_statusPriority(b.status));
+    }
+    if (sortOrder == 'DATE') {
+      final da = _parseDate(a.dueDate);
+      final db = _parseDate(b.dueDate);
+      if (da == null && db == null) return 0;
+      if (da == null) return 1;
+      if (db == null) return -1;
+      return da.compareTo(db);
+    }
+    // Default: STATUS_DATE — status priority first, then due date ascending
+    final statusCmp = _statusPriority(a.status).compareTo(_statusPriority(b.status));
+    if (statusCmp != 0) return statusCmp;
+    final da = _parseDate(a.dueDate);
+    final db = _parseDate(b.dueDate);
+    if (da == null && db == null) return 0;
+    if (da == null) return 1;
+    if (db == null) return -1;
+    return da.compareTo(db);
+  });
+
+  return filtered;
 });
 
 final totalWeeklyDaysProvider = Provider<double>((ref) {

@@ -19,6 +19,21 @@ class WorkerWorkspace extends ConsumerWidget {
     }
   }
 
+  /// Returns (weekStart, weekEnd) for the given 1-based week number.
+  /// Base: 2026-01-04 is week 1 start (first Sunday of 2026).
+  (DateTime, DateTime) _weekRange(int week) {
+    final base = DateTime(2026, 1, 4);
+    final start = base.add(Duration(days: (week - 1) * 7));
+    final end = start.add(const Duration(days: 6));
+    return (start, end);
+  }
+
+  String _fmtDate(DateTime d) {
+    final day = d.day.toString().padLeft(2, '0');
+    final month = d.month.toString().padLeft(2, '0');
+    return '$day/$month';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(filteredWorkerTasksProvider);
@@ -40,6 +55,8 @@ class WorkerWorkspace extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildKpiAndFilters(ref),
+                        const SizedBox(height: 16),
+                        _buildWeekNavigator(ref),
                         const SizedBox(height: 24),
                         if (tasks.isEmpty)
                           const Center(
@@ -58,7 +75,7 @@ class WorkerWorkspace extends ConsumerWidget {
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 380,
-                              mainAxisExtent: 220,
+                              mainAxisExtent: 260,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
                             ),
@@ -126,6 +143,7 @@ class WorkerWorkspace extends ConsumerWidget {
 
   PreferredSizeWidget _buildAppBar(WidgetRef ref) {
     final proxyUser = ref.watch(proxyUserProvider);
+    final sortOrder = ref.watch(sortOrderProvider);
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(64),
@@ -137,22 +155,51 @@ class WorkerWorkspace extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
-                      const SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                          Text('המטלות שלי', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
-                        ],
-                      ),
+                  // Pulse logo + title
+                  const Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                      Text('המטלות שלי', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                     ],
                   ),
+                  const SizedBox(width: 20),
+                  // Sort-by dropdown (right of title)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(LucideIcons.arrowDown, size: 13, color: Color(0xFF64748B)),
+                        const SizedBox(width: 6),
+                        const Text(AppStrings.sortBy, style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                        const SizedBox(width: 4),
+                        DropdownButton<String>(
+                          value: sortOrder,
+                          underline: const SizedBox(),
+                          isDense: true,
+                          style: const TextStyle(fontSize: 12, color: Color(0xFF1E293B), fontWeight: FontWeight.bold),
+                          items: const [
+                            DropdownMenuItem(value: 'STATUS_DATE', child: Text(AppStrings.sortStatusDate)),
+                            DropdownMenuItem(value: 'DATE', child: Text(AppStrings.sortDate)),
+                            DropdownMenuItem(value: 'STATUS', child: Text(AppStrings.sortStatus)),
+                          ],
+                          onChanged: (val) => ref.read(sortOrderProvider.notifier).set(val!),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  // User proxy selector
                   Container(
                     decoration: BoxDecoration(color: const Color(0xFFEFF6FF), border: Border.all(color: const Color(0xFFDBEAFE)), borderRadius: BorderRadius.circular(999)),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -178,6 +225,61 @@ class WorkerWorkspace extends ConsumerWidget {
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeekNavigator(WidgetRef ref) {
+    final week = ref.watch(weekProvider);
+    final (weekStart, weekEnd) = _weekRange(week);
+
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: const [BoxShadow(color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1))],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        // Force LTR so < is always on the left (prev) and > on the right (next)
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Previous week (left arrow)
+              IconButton(
+                icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
+                onPressed: week > 1 ? () => ref.read(weekProvider.notifier).set(week - 1) : null,
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+              const SizedBox(width: 12),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${AppStrings.weekLabel} $week',
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+                  ),
+                  Text(
+                    '${_fmtDate(weekStart)} - ${_fmtDate(weekEnd)}',
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 12),
+              // Next week (right arrow)
+              IconButton(
+                icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
+                onPressed: () => ref.read(weekProvider.notifier).set(week + 1),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
           ),
         ),
       ),
@@ -340,7 +442,6 @@ class WorkerWorkspace extends ConsumerWidget {
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(6)),
-                        // Direct Alpha manipulation instead of Opacity Widget for sublinear layout speeds
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -368,11 +469,37 @@ class WorkerWorkspace extends ConsumerWidget {
                 const SizedBox(height: 12),
                 const Divider(height: 1, color: Color(0xFFF1F5F9)),
                 const SizedBox(height: 8),
+                // תכנון מול ביצוע: labeled planned vs actual
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${(task.totalReported + task.reportedThisWeek).toStringAsFixed(1)} ימים', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-                    Text('/ ${task.planned.toStringAsFixed(1)} ימים', style: TextStyle(fontSize: 12, color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF94A3B8))),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 12),
+                        children: [
+                          const TextSpan(text: 'בביצוע: ', style: TextStyle(color: Color(0xFF64748B))),
+                          TextSpan(
+                            text: (task.totalReported + task.reportedThisWeek).toStringAsFixed(1),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF1E293B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 12),
+                        children: [
+                          const TextSpan(text: 'תכנון: ', style: TextStyle(color: Color(0xFF94A3B8))),
+                          TextSpan(
+                            text: task.planned.toStringAsFixed(1),
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -386,13 +513,27 @@ class WorkerWorkspace extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
+                // Due date row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(task.actualStart ?? 'טרם החל', style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8))),
-                    if (isLocked) const Icon(LucideIcons.lock, size: 12, color: Color(0xFFCBD5E1)),
+                    if (isLocked) const Icon(LucideIcons.lock, size: 12, color: Color(0xFFCBD5E1))
+                    else const SizedBox(),
+                    Row(
+                      children: [
+                        Text(
+                          task.dueDate ?? '—',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: task.dueDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(LucideIcons.calendar, size: 11, color: Color(0xFF94A3B8)),
+                      ],
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           )
