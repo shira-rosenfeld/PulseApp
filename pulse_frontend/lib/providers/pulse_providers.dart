@@ -6,6 +6,15 @@ import '../models/dtos/worker.dart';
 import '../models/enums/worker_type.dart';
 import '../models/enums/work_item_status.dart';
 
+class WorkspaceNotifier extends Notifier<String> {
+  @override
+  String build() => 'WORKER';
+  void set(String v) => state = v;
+}
+
+final currentWorkspaceProvider =
+    NotifierProvider<WorkspaceNotifier, String>(WorkspaceNotifier.new);
+
 class SearchQueryNotifier extends Notifier<String> {
   @override
   String build() => '';
