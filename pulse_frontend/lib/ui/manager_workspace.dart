@@ -94,7 +94,7 @@ class ManagerWorkspace extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                    Text('רשימת יעדים', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                    Text('רשימת פרויקטים', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                   ],
                 ),
               ],
