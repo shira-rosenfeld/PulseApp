@@ -1,5 +1,82 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
+// ─── Hebrew date-picker helpers ───────────────────────────────────────────────
+
+const _kWeekdayAbbr = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
+// Index 0 = Sunday (weekday % 7 of Dart's weekday 7), 1 = Monday, …, 6 = Saturday.
+
+const _kMonths = [
+  'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+  'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר',
+];
+
+/// Formats [date] as "יום ד', 15 באפריל 2026".
+String _fmtHebrew(DateTime d) {
+  final wd = _kWeekdayAbbr[d.weekday % 7];
+  final mo = _kMonths[d.month - 1];
+  return 'יום $wd, ${d.day} ב$mo ${d.year}';
+}
+
+// Wraps the existing (already-loaded Hebrew) MaterialLocalizations so that
+// only formatMediumDate is replaced — all other strings stay in Hebrew.
+class _HebrewDatePickerLocalizations extends DefaultMaterialLocalizations {
+  _HebrewDatePickerLocalizations(this._base);
+  final MaterialLocalizations _base;
+
+  @override
+  String formatMediumDate(DateTime date) => _fmtHebrew(date);
+
+  // Forward every string used inside the calendar date-picker back to the
+  // Hebrew base so nothing switches to English.
+  @override String get okButtonLabel          => _base.okButtonLabel;
+  @override String get cancelButtonLabel      => _base.cancelButtonLabel;
+  @override String get datePickerHelpText     => _base.datePickerHelpText;
+  @override String get nextMonthTooltip       => _base.nextMonthTooltip;
+  @override String get previousMonthTooltip   => _base.previousMonthTooltip;
+  @override String get dateHelpText           => _base.dateHelpText;
+  @override String get invalidDateFormatLabel => _base.invalidDateFormatLabel;
+  @override String get dateOutOfRangeLabel    => _base.dateOutOfRangeLabel;
+  @override List<String> get narrowWeekdays   => _base.narrowWeekdays;
+  @override int get firstDayOfWeekIndex       => _base.firstDayOfWeekIndex;
+  @override String formatMonthYear(DateTime date) => _base.formatMonthYear(date);
+  @override String formatYear(DateTime date)      => _base.formatYear(date);
+  @override String formatFullDate(DateTime date)  => _base.formatFullDate(date);
+  @override String selectYearSemanticsLabel(int year) => _base.selectYearSemanticsLabel(year);
+}
+
+class _MaterialLocalizationsDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const _MaterialLocalizationsDelegate(this._base);
+  final MaterialLocalizations _base;
+
+  @override bool isSupported(Locale locale) => true;
+  @override Future<MaterialLocalizations> load(Locale locale) =>
+      SynchronousFuture<MaterialLocalizations>(
+          _HebrewDatePickerLocalizations(_base));
+  @override bool shouldReload(_MaterialLocalizationsDelegate old) => false;
+}
+
+// Reads the current context's Hebrew MaterialLocalizations and overlays
+// _HebrewDatePickerLocalizations so formatMediumDate shows the full month.
+class _DatePickerLocalizationsOverride extends StatelessWidget {
+  const _DatePickerLocalizationsOverride({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final base = MaterialLocalizations.of(context);
+    return Localizations.override(
+      context: context,
+      delegates: [_MaterialLocalizationsDelegate(base)],
+      child: child,
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 
 class ModalsShowcase extends StatelessWidget {
   const ModalsShowcase({super.key});
@@ -95,16 +172,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         borderRadius: BorderRadius.circular(8),
       );
 
-  static String _fmt(DateTime d) {
-    final day = d.day.toString().padLeft(2, '0');
-    final m = d.month.toString().padLeft(2, '0');
-    return '$day/$m/${d.year}';
-  }
-
   // Computed due date = start date + planned days (null until start date chosen)
   String? get _computedDueDate {
     if (_startDate == null) return null;
-    return _fmt(_startDate!.add(Duration(days: _plannedDays)));
+    return _fmtHebrew(_startDate!.add(Duration(days: _plannedDays)));
   }
 
   Future<void> _pickStartDate() async {
@@ -114,6 +185,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       initialDate: _startDate ?? now,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
+      builder: (ctx, child) => Theme(
+        data: Theme.of(ctx).copyWith(
+          datePickerTheme: const DatePickerThemeData(
+            // Smaller headline prevents the full date from being truncated.
+            headerHeadlineStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        child: _DatePickerLocalizationsOverride(child: child!),
+      ),
     );
     if (picked != null) setState(() => _startDate = picked);
   }
@@ -206,7 +286,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                         color: _startDate != null ? const Color(0xFF2563EB) : const Color(0xFF94A3B8)),
                     const SizedBox(width: 8),
                     Text(
-                      _startDate != null ? _fmt(_startDate!) : 'בחר תאריך התחלה...',
+                      _startDate != null ? _fmtHebrew(_startDate!) : 'בחר תאריך התחלה...',
                       style: TextStyle(
                         fontSize: 13,
                         color: _startDate != null ? const Color(0xFF334155) : const Color(0xFF94A3B8),
