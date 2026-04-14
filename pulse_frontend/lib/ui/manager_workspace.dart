@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../core/app_strings.dart';
 import '../providers/pulse_providers.dart';
+import 'workspace_toggle.dart';
 import '../models/dtos/target.dart';
 import '../models/dtos/output.dart';
 import '../models/dtos/work_item.dart';
@@ -81,24 +82,10 @@ class ManagerWorkspace extends ConsumerWidget {
           border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Row(
-              children: [
-                const Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
-                const SizedBox(width: 8),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                    Text('רשימת פרויקטים', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
-                  ],
-                ),
-              ],
-            ),
+            // Truly centered search field regardless of left/right group widths
             SizedBox(
               width: 300,
               child: TextField(
@@ -114,9 +101,40 @@ class ManagerWorkspace extends ConsumerWidget {
                 ),
               ),
             ),
-            const CircleAvatar(
-              backgroundColor: Color(0xFF1E293B),
-              child: Text('י.י', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+            // Start side (visually RIGHT in RTL): Logo + Title
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(LucideIcons.layoutDashboard, size: 20, color: Color(0xFF2563EB)),
+                  SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                      Text(AppStrings.workspaceManager, style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // End side (visually LEFT in RTL): Toggle + Avatar
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  WorkspaceToggle(),
+                  SizedBox(width: 12),
+                  CircleAvatar(
+                    backgroundColor: Color(0xFF1E293B),
+                    child: Text('י.י', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

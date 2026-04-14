@@ -5,6 +5,7 @@ import '../core/app_strings.dart';
 import '../models/dtos/worker_task.dart';
 import '../models/enums/work_item_status.dart';
 import '../providers/worker_providers.dart';
+import 'workspace_toggle.dart';
 
 // Top-level map so it is allocated once and reuses AppStrings constants.
 const _statusLabels = {
@@ -173,7 +174,7 @@ class WorkerWorkspace extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text(AppStrings.appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                      Text('המטלות שלי', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                      Text(AppStrings.workspaceWorker, style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
                     ],
                   ),
                   const SizedBox(width: 20),
@@ -208,6 +209,9 @@ class WorkerWorkspace extends ConsumerWidget {
                     ),
                   ),
                   const Spacer(),
+                  // Workspace toggle
+                  const WorkspaceToggle(),
+                  const SizedBox(width: 12),
                   // User proxy selector
                   Container(
                     decoration: BoxDecoration(color: const Color(0xFFEFF6FF), border: Border.all(color: const Color(0xFFDBEAFE)), borderRadius: BorderRadius.circular(999)),

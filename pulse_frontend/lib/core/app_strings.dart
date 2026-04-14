@@ -47,4 +47,7 @@ class AppStrings {
   static const String weekLabel = 'שבוע';
   static const String startDateLabel = 'התחלה';
   static const String dueDateLabel = 'יעד';
+
+  static const String workspaceManager = 'ניהול פרויקטים';
+  static const String workspaceWorker  = 'המטלות שלי';
 }

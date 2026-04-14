@@ -4,8 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'ui/manager_workspace.dart';
 import 'ui/worker_workspace.dart';
-// import 'ui/task_modals.dart'; // Import this if you want to preview ModalsShowcase()
 import 'core/app_strings.dart';
+import 'providers/pulse_providers.dart';
 
 // Calls window._pulseRemoveLoader() defined in index.html.
 // dart:js_interop is the modern, non-deprecated JS interop API (Dart 3.x).
@@ -20,28 +20,8 @@ void main() {
   runApp(const ProviderScope(child: PulseApp()));
 }
 
-class PulseApp extends StatefulWidget {
+class PulseApp extends StatelessWidget {
   const PulseApp({super.key});
-
-  @override
-  State<PulseApp> createState() => _PulseAppState();
-}
-
-class _PulseAppState extends State<PulseApp> {
-  late final Future<String> _roleFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _roleFuture = _fetchUserRole();
-  }
-
-  Future<String> _fetchUserRole() async {
-    // TODO: Replace with real API call to backend (e.g. GET /api/me/role).
-    // No artificial delay — the actual network round-trip will provide
-    // natural latency once the backend is wired up.
-    return 'Worker';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,31 +39,19 @@ class _PulseAppState extends State<PulseApp> {
         scaffoldBackgroundColor: const Color(0xFFF8FAFC),
         fontFamily: 'Segoe UI',
       ),
-      home: FutureBuilder<String>(
-        future: _roleFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image(image: const AssetImage('assets/pulse_loading.gif'), width: 150, height: 150),
-                    const SizedBox(height: 16),
-                    const Text('טוען סביבת עבודה...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          if (snapshot.hasData && snapshot.data == 'Manager') {
-            return const ManagerWorkspace();
-          } else {
-            return const WorkerWorkspace();
-          }
-        },
-      ),
+      home: const HomeShell(),
     );
+  }
+}
+
+class HomeShell extends ConsumerWidget {
+  const HomeShell({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final workspace = ref.watch(currentWorkspaceProvider);
+    return workspace == 'MANAGER'
+        ? const ManagerWorkspace()
+        : const WorkerWorkspace();
   }
 }
