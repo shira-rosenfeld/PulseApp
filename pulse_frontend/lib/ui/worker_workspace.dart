@@ -6,6 +6,15 @@ import '../models/dtos/worker_task.dart';
 import '../models/enums/work_item_status.dart';
 import '../providers/worker_providers.dart';
 
+// Top-level map so it is allocated once and reuses AppStrings constants.
+const _statusLabels = {
+  WorkItemStatus.newTask:    AppStrings.statusNew,
+  WorkItemStatus.inProgress: AppStrings.statusInProgress,
+  WorkItemStatus.onHold:     AppStrings.statusOnHold,
+  WorkItemStatus.done:       AppStrings.statusDone,
+  WorkItemStatus.canceled:   AppStrings.statusCanceled,
+};
+
 class WorkerWorkspace extends ConsumerWidget {
   const WorkerWorkspace({super.key});
 
@@ -299,9 +308,9 @@ class WorkerWorkspace extends ConsumerWidget {
           children: [
             _buildStatCard('סה"כ ימים השבוע', '${totalDays.toStringAsFixed(1)} ימים', LucideIcons.clock, const Color(0xFFF0FDF4), const Color(0xFF16A34A), const Color(0xFF1E293B)),
             const SizedBox(width: 12),
-            _buildStatCard('משימות פתוחות', '${tasks.where((t) => ['10', '20', '30'].contains(t.status.code)).length}', LucideIcons.listTodo, const Color(0xFFFFF7ED), const Color(0xFFEA580C), const Color(0xFF1E293B)),
+            _buildStatCard('משימות פתוחות', '${tasks.where((t) => t.status != WorkItemStatus.done && t.status != WorkItemStatus.canceled).length}', LucideIcons.listTodo, const Color(0xFFFFF7ED), const Color(0xFFEA580C), const Color(0xFF1E293B)),
             const SizedBox(width: 12),
-            _buildStatCard('הושלמו', '${tasks.where((t) => ['40', '90'].contains(t.status.code)).length}', LucideIcons.circleCheck, const Color(0xFFFAF5FF), const Color(0xFF7E22CE), const Color(0xFF1E293B)),
+            _buildStatCard('הושלמו', '${tasks.where((t) => t.status == WorkItemStatus.done || t.status == WorkItemStatus.canceled).length}', LucideIcons.circleCheck, const Color(0xFFFAF5FF), const Color(0xFF7E22CE), const Color(0xFF1E293B)),
           ],
         ),
         Container(
@@ -365,8 +374,8 @@ class WorkerWorkspace extends ConsumerWidget {
   }
 
   Widget _buildTaskCard(WorkerTask task, WidgetRef ref) {
-    final isLocked = ['40', '90'].contains(task.status.code);
-    final isDaysLocked = ['30', '40', '90'].contains(task.status.code);
+    final isLocked = task.status == WorkItemStatus.done || task.status == WorkItemStatus.canceled;
+    final isDaysLocked = isLocked || task.status == WorkItemStatus.onHold;
     final isOverBudget = (task.totalReported + task.reportedThisWeek) > task.planned;
     final statusColor = _getStatusColor(task.status);
 
@@ -431,8 +440,7 @@ class WorkerWorkspace extends ConsumerWidget {
                           isDense: true,
                           style: const TextStyle(fontSize: 12, color: Color(0xFF334155)),
                           items: WorkItemStatus.values.map((s) {
-                            const labels = {'newTask': 'חדש', 'inProgress': 'בביצוע', 'onHold': 'מוקפא', 'done': 'הסתיים', 'canceled': 'בוטל'};
-                            return DropdownMenuItem(value: s, child: Text(labels[s.name] ?? s.name));
+                            return DropdownMenuItem(value: s, child: Text(_statusLabels[s] ?? s.name));
                           }).toList(),
                           onChanged: isLocked ? null : (val) => ref.read(workerTasksProvider.notifier).updateStatus(task.id, val!),
                         ),
@@ -506,7 +514,7 @@ class WorkerWorkspace extends ConsumerWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(999),
                   child: LinearProgressIndicator(
-                    value: (task.totalReported + task.reportedThisWeek) / task.planned,
+                    value: task.planned > 0 ? ((task.totalReported + task.reportedThisWeek) / task.planned).clamp(0.0, 1.0) : 0.0,
                     minHeight: 6,
                     backgroundColor: const Color(0xFFF1F5F9),
                     color: isOverBudget ? const Color(0xFFEF4444) : const Color(0xFF3B82F6),

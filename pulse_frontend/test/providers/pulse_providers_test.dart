@@ -53,6 +53,39 @@ void main() {
     });
   });
 
+  group('filteredDataProvider – additional searches', () {
+    test('query matching output ID returns only that output and its children', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      container.read(searchQueryProvider.notifier).set('NET-80001');
+      final result = container.read(filteredDataProvider);
+
+      expect(result.length, 1);
+      expect(result.first.id, 'WBS-2026.10');
+      expect(result.first.children.length, 1);
+      expect(result.first.children.first.id, 'NET-80001');
+      // All children of the matched output are preserved
+      expect(result.first.children.first.children.length, 3);
+    });
+
+    test('query matching task description returns only that work item', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      container.read(searchQueryProvider.notifier).set('עיצוב מסד נתונים');
+      final result = container.read(filteredDataProvider);
+
+      expect(result.isNotEmpty, true);
+      final allItems = result
+          .expand((t) => t.children)
+          .expand((o) => o.children)
+          .toList();
+      expect(allItems.length, 1);
+      expect(allItems.first.id, 'TASK-1001');
+    });
+  });
+
   group('ExpandedNodesNotifier.toggle', () {
     test('toggle sets false node to true', () {
       final container = ProviderContainer();
