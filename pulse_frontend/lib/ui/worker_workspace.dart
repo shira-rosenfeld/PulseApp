@@ -253,16 +253,17 @@ class WorkerWorkspace extends ConsumerWidget {
           boxShadow: const [BoxShadow(color: Color(0x0A000000), blurRadius: 4, offset: Offset(0, 1))],
         ),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        // Force LTR so < is always on the left (prev) and > on the right (next)
+        // Force LTR so < is always on the left and > always on the right visually.
+        // In RTL Hebrew: left (<) = next week, right (>) = previous week.
         child: Directionality(
           textDirection: TextDirection.ltr,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Previous week (left arrow)
+              // Next week — left arrow; in RTL "left" means forward
               IconButton(
                 icon: const Icon(LucideIcons.chevronLeft, size: 18, color: Color(0xFF64748B)),
-                onPressed: week > 1 ? () => ref.read(weekProvider.notifier).set(week - 1) : null,
+                onPressed: () => ref.read(weekProvider.notifier).set(week + 1),
                 padding: EdgeInsets.zero,
                 visualDensity: VisualDensity.compact,
               ),
@@ -281,10 +282,10 @@ class WorkerWorkspace extends ConsumerWidget {
                 ],
               ),
               const SizedBox(width: 12),
-              // Next week (right arrow)
+              // Previous week — right arrow; in RTL "right" means back
               IconButton(
                 icon: const Icon(LucideIcons.chevronRight, size: 18, color: Color(0xFF64748B)),
-                onPressed: () => ref.read(weekProvider.notifier).set(week + 1),
+                onPressed: week > 1 ? () => ref.read(weekProvider.notifier).set(week - 1) : null,
                 padding: EdgeInsets.zero,
                 visualDensity: VisualDensity.compact,
               ),
