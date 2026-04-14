@@ -43,7 +43,7 @@ class _HebrewDatePickerLocalizations extends DefaultMaterialLocalizations {
   @override String formatMonthYear(DateTime date) => _base.formatMonthYear(date);
   @override String formatYear(DateTime date)      => _base.formatYear(date);
   @override String formatFullDate(DateTime date)  => _base.formatFullDate(date);
-  @override String selectYearSemanticsLabel(int year) => _base.selectYearSemanticsLabel(year);
+  @override String get selectYearSemanticsLabel => _base.selectYearSemanticsLabel;
 }
 
 class _MaterialLocalizationsDelegate
