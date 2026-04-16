@@ -20,18 +20,19 @@ public sealed class SapDestinationConfig : IDestinationConfiguration
     {
         var section = configuration.GetSection($"SapSettings:{DestinationName}");
 
-        _parameters = new RfcConfigParameters
-        {
-            { RfcConfigParameters.AppServerHost, section["AppServerHost"]! },
-            { RfcConfigParameters.SystemNumber,  section["SystemNumber"]!  },
-            { RfcConfigParameters.SystemID,      section["SystemID"]!      },
-            { RfcConfigParameters.Client,        section["Client"]!        },
-            { RfcConfigParameters.User,          section["User"]!          },
-            { RfcConfigParameters.Password,      section["Password"]!      },
-            { RfcConfigParameters.Language,      section["Language"]!      },
-            { RfcConfigParameters.PoolSize,      section["PoolSize"]!      },
-            { RfcConfigParameters.MaxPoolSize,   section["MaxPoolSize"]!   },
-        };
+        // Use explicit indexer assignment (the documented NCo pattern) rather than
+        // collection initializer syntax, which requires Add(string,string) and is
+        // not guaranteed by the RfcConfigParameters API contract.
+        _parameters = new RfcConfigParameters();
+        _parameters[RfcConfigParameters.AppServerHost] = section["AppServerHost"]!;
+        _parameters[RfcConfigParameters.SystemNumber]  = section["SystemNumber"]!;
+        _parameters[RfcConfigParameters.SystemID]      = section["SystemID"]!;
+        _parameters[RfcConfigParameters.Client]        = section["Client"]!;
+        _parameters[RfcConfigParameters.User]          = section["User"]!;
+        _parameters[RfcConfigParameters.Password]      = section["Password"]!;
+        _parameters[RfcConfigParameters.Language]      = section["Language"]!;
+        _parameters[RfcConfigParameters.PoolSize]      = section["PoolSize"]!;
+        _parameters[RfcConfigParameters.MaxPoolSize]   = section["MaxPoolSize"]!;
     }
 
     public RfcConfigParameters GetParameters(string destinationName)
