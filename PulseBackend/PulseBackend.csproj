@@ -11,9 +11,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- SAP .NET Connector 3.1 — DLLs must be placed manually in libs/ (not on public NuGet).
-         Download x64 binaries from SAP Support Portal (SAP Note 2573790).
-         Requires Microsoft Visual C++ Redistributable (latest x64) on the host. -->
+    <!-- SAP .NET Connector 3.1 — place the following files from the NCo zip into libs/:
+           sapnco.dll, sapnco_utils.dll  (managed assemblies — referenced below)
+           ijwhost.dll, cpc4n.dll        (native DLLs — copied to output, NOT referenced)
+           SIGNATURE.SMF                 (SAP integrity signature — NCo won't load without it)
+           Microsoft.Win32.Registry.dll  (compat shim NCo links against — copied to output)
+           System.Configuration.ConfigurationManager.dll (compat shim — copied to output)
+         Download x64 binaries from SAP Support Portal. Requires the Microsoft Visual C++
+         Redistributable (latest x64) installed on the host at runtime. -->
+
+    <!-- Managed assemblies: referenced so the compiler resolves NCo types -->
     <Reference Include="sapnco">
       <HintPath>libs\sapnco.dll</HintPath>
       <Private>true</Private>
@@ -22,5 +29,24 @@
       <HintPath>libs\sapnco_utils.dll</HintPath>
       <Private>true</Private>
     </Reference>
+
+    <!-- Native / companion files: must live next to the application .exe at runtime.
+         Per the NCo install guide, ijwhost.dll must NOT be added as a reference —
+         it is a native IJW host loaded automatically by the .NET runtime. -->
+    <Content Include="libs\ijwhost.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libs\cpc4n.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libs\SIGNATURE.SMF">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libs\Microsoft.Win32.Registry.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libs\System.Configuration.ConfigurationManager.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
