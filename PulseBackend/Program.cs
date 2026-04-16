@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Reads connection parameters from "SapSettings:MySapConnection" in appsettings.json.
 // IMPORTANT: RegisterConfiguration must be called exactly once — calling it again
 // throws RfcInvalidStateException. Keep it here at startup, never inside a service.
-RfcDestinationManager.RegisterConfiguration(new SapDestinationConfig(builder.Configuration));
+RfcDestinationManager.RegisterDestinationConfiguration(new SapDestinationConfig(builder.Configuration));
 
 // SapApiService has no per-request state; Singleton matches the NCo destination lifetime.
 builder.Services.AddSingleton<ISapApiService, SapApiService>();

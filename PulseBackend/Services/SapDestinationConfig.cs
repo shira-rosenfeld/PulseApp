@@ -32,7 +32,7 @@ public sealed class SapDestinationConfig : IDestinationConfiguration
         _parameters[RfcConfigParameters.Password]      = section["Password"]!;
         _parameters[RfcConfigParameters.Language]      = section["Language"]!;
         _parameters[RfcConfigParameters.PoolSize]      = section["PoolSize"]!;
-        _parameters[RfcConfigParameters.MaxPoolSize]   = section["MaxPoolSize"]!;
+        _parameters["MAX_POOL_SIZE"]                   = section["MaxPoolSize"]!;  // RfcConfigParameters.MaxPoolSize removed in NCo 3.1
     }
 
     public RfcConfigParameters GetParameters(string destinationName)
