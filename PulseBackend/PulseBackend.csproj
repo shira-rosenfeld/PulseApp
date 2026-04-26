@@ -30,23 +30,38 @@
       <Private>true</Private>
     </Reference>
 
-    <!-- Native / companion files: must live next to the application .exe at runtime.
-         Per the NCo install guide, ijwhost.dll must NOT be added as a reference —
-         it is a native IJW host loaded automatically by the .NET runtime. -->
+    <!-- All NCo files must land in the output root alongside the .exe.
+         Without <Link>, MSBuild preserves the libs\ subdirectory in the output,
+         which breaks Windows DLL search when sapnco_utils.dll looks for cpc4n.dll.
+         The two managed assemblies are also listed here as Content so they are
+         guaranteed to be copied even when the SDK skips C++/CLI Reference items. -->
+    <Content Include="libs\sapnco.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>sapnco.dll</Link>
+    </Content>
+    <Content Include="libs\sapnco_utils.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>sapnco_utils.dll</Link>
+    </Content>
     <Content Include="libs\ijwhost.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>ijwhost.dll</Link>
     </Content>
     <Content Include="libs\cpc4n.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>cpc4n.dll</Link>
     </Content>
     <Content Include="libs\SIGNATURE.SMF">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>SIGNATURE.SMF</Link>
     </Content>
     <Content Include="libs\Microsoft.Win32.Registry.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Microsoft.Win32.Registry.dll</Link>
     </Content>
     <Content Include="libs\System.Configuration.ConfigurationManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>System.Configuration.ConfigurationManager.dll</Link>
     </Content>
   </ItemGroup>
 </Project>
