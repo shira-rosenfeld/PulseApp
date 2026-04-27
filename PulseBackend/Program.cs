@@ -1,7 +1,22 @@
 // using Microsoft.AspNetCore.Authentication.Negotiate; // Re-enable with auth
+using System.Reflection;
 using PulseBackend.Models.DTOs;
 using PulseBackend.Services;
 using SAP.Middleware.Connector;
+
+// SAP NCo 3.1 is a C++/CLI (IJW) assembly. When its native layer loads managed
+// compat shims (System.Configuration.ConfigurationManager, Microsoft.Win32.Registry)
+// by strong name, the .NET runtime's base-directory probing does not fire, so the
+// assemblies are not found even though they are physically present next to the .exe.
+// This resolver bridges that gap: it catches any resolution failure and loads the
+// matching .dll from the application directory. Must be registered before any NCo
+// type is first accessed (i.e. before WebApplication.CreateBuilder).
+AppDomain.CurrentDomain.AssemblyResolve += (_, args) =>
+{
+    string name = new AssemblyName(args.Name!).Name!;
+    string path = Path.Combine(AppContext.BaseDirectory, name + ".dll");
+    return File.Exists(path) ? Assembly.LoadFrom(path) : null;
+};
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +28,6 @@ var builder = WebApplication.CreateBuilder(args);
 //     options.FallbackPolicy = options.DefaultPolicy;
 // });
 
-// Register SAP NCo 3.1 destination configuration once for the process lifetime.
-// Reads connection parameters from "SapSettings:MySapConnection" in appsettings.json.
-// IMPORTANT: RegisterConfiguration must be called exactly once — calling it again
-// throws RfcInvalidStateException. Keep it here at startup, never inside a service.
 RfcDestinationManager.RegisterDestinationConfiguration(new SapDestinationConfig(builder.Configuration));
 
 // SapApiService has no per-request state; Singleton matches the NCo destination lifetime.
