@@ -28,10 +28,6 @@ var builder = WebApplication.CreateBuilder(args);
 //     options.FallbackPolicy = options.DefaultPolicy;
 // });
 
-// Register SAP NCo 3.1 destination configuration once for the process lifetime.
-// Reads connection parameters from "SapSettings:MySapConnection" in appsettings.json.
-// IMPORTANT: RegisterConfiguration must be called exactly once — calling it again
-// throws RfcInvalidStateException. Keep it here at startup, never inside a service.
 RfcDestinationManager.RegisterDestinationConfiguration(new SapDestinationConfig(builder.Configuration));
 
 // SapApiService has no per-request state; Singleton matches the NCo destination lifetime.
