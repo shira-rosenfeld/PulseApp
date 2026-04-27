@@ -8,11 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="10.0.0" />
-    <!-- NCo 3.1 links against these compat shims by strong name (Version=5.0.0.0).
-         They must be NuGet references — a manually copied Content DLL is not registered
-         in deps.json, so the runtime's strong-name probing never finds it. -->
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,8 +17,9 @@
            SIGNATURE.SMF                 (SAP integrity signature — NCo won't load without it)
          Download x64 binaries from SAP Support Portal. Requires the Microsoft Visual C++
          Redistributable (latest x64) installed on the host at runtime.
-         Microsoft.Win32.Registry and System.Configuration.ConfigurationManager are
-         supplied via NuGet (above) so the runtime can resolve them by strong name. -->
+         Microsoft.Win32.Registry.dll and System.Configuration.ConfigurationManager.dll
+         are also in libs/ — copied to output below, resolved at runtime via the
+         AssemblyResolve handler in Program.cs (no NuGet required). -->
 
     <!-- Managed assemblies: referenced so the compiler resolves NCo types -->
     <Reference Include="sapnco">
@@ -59,6 +55,18 @@
     <Content Include="libs\SIGNATURE.SMF">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>SIGNATURE.SMF</Link>
+    </Content>
+    <!-- NCo 3.1 references these by strong name from within IJW (C++/CLI) code.
+         The runtime's base-directory probing does not fire reliably for IJW-loaded
+         assemblies, so Program.cs registers an AssemblyResolve handler that loads
+         them from AppContext.BaseDirectory instead. -->
+    <Content Include="libs\Microsoft.Win32.Registry.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Microsoft.Win32.Registry.dll</Link>
+    </Content>
+    <Content Include="libs\System.Configuration.ConfigurationManager.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>System.Configuration.ConfigurationManager.dll</Link>
     </Content>
   </ItemGroup>
 </Project>
