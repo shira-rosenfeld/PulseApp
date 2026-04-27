@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="10.0.0" />
+    <!-- NCo 3.1 links against these compat shims by strong name (Version=5.0.0.0).
+         They must be NuGet references — a manually copied Content DLL is not registered
+         in deps.json, so the runtime's strong-name probing never finds it. -->
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,10 +20,10 @@
            sapnco.dll, sapnco_utils.dll  (managed assemblies — referenced below)
            ijwhost.dll, cpc4n.dll        (native DLLs — copied to output, NOT referenced)
            SIGNATURE.SMF                 (SAP integrity signature — NCo won't load without it)
-           Microsoft.Win32.Registry.dll  (compat shim NCo links against — copied to output)
-           System.Configuration.ConfigurationManager.dll (compat shim — copied to output)
          Download x64 binaries from SAP Support Portal. Requires the Microsoft Visual C++
-         Redistributable (latest x64) installed on the host at runtime. -->
+         Redistributable (latest x64) installed on the host at runtime.
+         Microsoft.Win32.Registry and System.Configuration.ConfigurationManager are
+         supplied via NuGet (above) so the runtime can resolve them by strong name. -->
 
     <!-- Managed assemblies: referenced so the compiler resolves NCo types -->
     <Reference Include="sapnco">
@@ -54,14 +59,6 @@
     <Content Include="libs\SIGNATURE.SMF">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>SIGNATURE.SMF</Link>
-    </Content>
-    <Content Include="libs\Microsoft.Win32.Registry.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>Microsoft.Win32.Registry.dll</Link>
-    </Content>
-    <Content Include="libs\System.Configuration.ConfigurationManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>System.Configuration.ConfigurationManager.dll</Link>
     </Content>
   </ItemGroup>
 </Project>
