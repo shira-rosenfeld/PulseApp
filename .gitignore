@@ -44,6 +44,11 @@ publish/
 **/publish/
 
 # ======================
+# Flutter offline package cache (pre-downloaded for air-gapped deployment)
+# ======================
+pub_cache/
+
+# ======================
 # Flutter / Dart (pulse_frontend)
 # ======================
 
