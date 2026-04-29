@@ -1,16 +1,62 @@
 # Flutter package downloads for PulseApp (pulse_frontend)
-# 90 packages – all from pub.dev
+# 90 packages - all from pub.dev
 #
-# HOW TO DOWNLOAD:
-#   Option A – Browser: open each URL, the file downloads automatically.
-#   Option B – Download manager: import this file as a URL list.
-#   Option C – cmd.exe (Windows 10+, curl is built-in):
-#     for /f "tokens=*" %u in (flutter_package_urls.txt) do @if not "%u"=="" if not "%u:~0,1%"=="#" curl -L -O "%u"
+# ============================================================
+# STEP 1 - DOWNLOAD  (on any internet-connected Windows machine)
+# ============================================================
 #
-# Save all .tar.gz files into a single folder, then transfer that folder
-# (along with the project) to the air-gapped machine.
-# On the air-gapped machine run:  scripts\restore_flutter_packages.ps1
+# Save this file anywhere, for example:  C:\flutter_downloads\flutter_package_urls.txt
+# Create a folder for the archives, for example:  C:\flutter_downloads\packages\
 #
+# Then choose one of these methods:
+#
+#   Option A - Browser (no tools needed):
+#     Open each URL below in your browser - the .tar.gz downloads automatically.
+#     Save every file into:  C:\flutter_downloads\packages\
+#
+#   Option B - Download manager (e.g. Free Download Manager, JDownloader):
+#     Import this .txt file as a URL list. Set the output folder to:
+#       C:\flutter_downloads\packages\
+#
+#   Option C - cmd.exe  (curl is built into Windows 10+, no install needed):
+#     1. Open cmd.exe
+#     2. Create and enter the output folder:
+#          md C:\flutter_downloads\packages
+#          cd C:\flutter_downloads\packages
+#     3. Paste this single command (replace the path if you saved this file elsewhere):
+#          for /f "tokens=*" %u in (C:\flutter_downloads\flutter_package_urls.txt) do @if not "%u"=="" if not "%u:~0,1%"=="#" curl -L -O "%u"
+#     curl will download all 90 files into the current folder automatically.
+#
+# ============================================================
+# STEP 2 - WHERE TO PUT THE FILES  (on the air-gapped machine)
+# ============================================================
+#
+# After downloading, you will have 90 files named like:
+#   http-1.6.0.tar.gz
+#   flutter_riverpod-2.6.1.tar.gz
+#   ... etc.
+#
+# Transfer the following to the air-gapped machine:
+#   - The entire PulseApp project folder  (contains pulse_frontend\ and scripts\)
+#   - The packages folder with all 90 .tar.gz files
+#
+# Place the packages folder anywhere you like, for example:
+#   C:\flutter_downloads\packages\
+#
+# ============================================================
+# STEP 3 - RESTORE  (on the air-gapped machine, in PowerShell)
+# ============================================================
+#
+#   cd C:\path\to\PulseApp
+#   .\scripts\restore_flutter_packages.ps1 -DownloadsPath "C:\flutter_downloads\packages"
+#
+# The script will:
+#   - Extract each .tar.gz into the correct pub cache structure inside the project
+#   - Write the sha256 hash files Flutter expects
+#   - Run "flutter pub get --offline" automatically
+#   - Tell you if any archive is missing so you know exactly what to re-download
+#
+# ============================================================
 https://pub.dev/packages/_fe_analyzer_shared/versions/85.0.0.tar.gz
 https://pub.dev/packages/analyzer/versions/7.6.0.tar.gz
 https://pub.dev/packages/analyzer_plugin/versions/0.13.4.tar.gz
