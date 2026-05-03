@@ -3,8 +3,50 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="sapnco">
+      <HintPath>libs\sapnco.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="sapnco_utils">
+      <HintPath>libs\sapnco_utils.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+
+    <Content Include="libs\sapnco.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>sapnco.dll</Link>
+    </Content>
+    <Content Include="libs\sapnco_utils.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>sapnco_utils.dll</Link>
+    </Content>
+    <Content Include="libs\ijwhost.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>ijwhost.dll</Link>
+    </Content>
+    <Content Include="libs\cpc4n.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>cpc4n.dll</Link>
+    </Content>
+    <Content Include="libs\SIGNATURE.SMF">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>SIGNATURE.SMF</Link>
+    </Content>
+    <Content Include="libs\Microsoft.Win32.Registry.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Microsoft.Win32.Registry.dll</Link>
+    </Content>
+    <Content Include="libs\System.Configuration.ConfigurationManager.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>System.Configuration.ConfigurationManager.dll</Link>
+    </Content>
   </ItemGroup>
 </Project>
