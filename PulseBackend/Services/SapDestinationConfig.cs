@@ -6,9 +6,17 @@ namespace PulseBackend.Services;
 /// Supplies SAP RFC connection parameters to the NCo destination manager.
 /// Reads from the "SapSettings:MySapConnection" section in appsettings.json.
 ///
-/// For production: move credentials out of appsettings.json into a secrets manager
-/// (Azure Key Vault, AWS Secrets Manager, environment variables, etc.) and read
-/// them here via IConfiguration — no code changes required.
+/// Authentication uses SNC (Secure Network Communications) SSO: the process
+/// identity (Windows service account / Kerberos) is presented to SAP instead
+/// of a username and password.  No User/Password keys are read or sent.
+///
+/// Required configuration keys:
+///   SncPartnerName  – SAP server's SNC principal name, e.g. "p:CN=SID,O=Corp,C=US"
+///   SncQop          – Quality of protection: 1=auth, 2=integrity, 3=privacy,
+///                     8=system default (recommended), 9=maximum
+///   SncLib          – (optional) absolute path to the GSSAPI/Kerberos library
+///                     (e.g. gsskrb5.dll or sapcrypto.dll). When omitted the
+///                     system-wide SNC_LIB environment variable is used.
 /// </summary>
 public sealed class SapDestinationConfig : IDestinationConfiguration
 {
@@ -28,11 +36,18 @@ public sealed class SapDestinationConfig : IDestinationConfiguration
         _parameters[RfcConfigParameters.SystemNumber]  = section["SystemNumber"]!;
         _parameters[RfcConfigParameters.SystemID]      = section["SystemID"]!;
         _parameters[RfcConfigParameters.Client]        = section["Client"]!;
-        _parameters[RfcConfigParameters.User]          = section["User"]!;
-        _parameters[RfcConfigParameters.Password]      = section["Password"]!;
         _parameters[RfcConfigParameters.Language]      = section["Language"]!;
         _parameters[RfcConfigParameters.PoolSize]      = section["PoolSize"]!;
         _parameters["MAX_POOL_SIZE"]                   = section["MaxPoolSize"]!;  // RfcConfigParameters.MaxPoolSize removed in NCo 3.1
+
+        // SNC SSO — enables Kerberos/Windows-identity logon; User/Password are not used.
+        _parameters["SNC_MODE"]        = "1";
+        _parameters["SNC_PARTNERNAME"] = section["SncPartnerName"]!;
+        _parameters["SNC_QOP"]         = section["SncQop"] ?? "8";
+
+        var sncLib = section["SncLib"];
+        if (!string.IsNullOrEmpty(sncLib))
+            _parameters["SNC_LIB"] = sncLib;
     }
 
     public RfcConfigParameters GetParameters(string destinationName)
